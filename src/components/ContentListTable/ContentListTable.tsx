@@ -33,6 +33,7 @@ import ContentListFilters from './ContentListFilters';
 import ContentListChips from './ContentListChips';
 import { ContentListContext } from './ContentListContext';
 import Hide from '../Hide/Hide';
+import { AddContent } from '../AddContent/AddContent';
 
 const useStyles = createUseStyles({
   actionContainer: {
@@ -59,9 +60,10 @@ const ContentListTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(storedPerPage);
 
-  const { filterData, searchQuery, selectedVersions, selectedArches } = useContext(ContentListContext);
+  const { filterData, searchQuery, selectedVersions, selectedArches } =
+    useContext(ContentListContext);
 
-  const showListChips = selectedVersions.length || selectedArches.length || searchQuery != ''
+  const showListChips = selectedVersions.length || selectedArches.length || searchQuery != '';
 
   const hasActionPermissions = true; // TODO: Incorporate permissions here later.
 
@@ -123,7 +125,14 @@ const ContentListTable = () => {
     <Grid>
       <Flex className={classes.actionContainer}>
         <FlexItem>
-          <ContentListFilters />
+          <Flex>
+            <FlexItem>
+              <ContentListFilters />
+            </FlexItem>
+            <FlexItem>
+              <AddContent />
+            </FlexItem>
+          </Flex>
         </FlexItem>
         <FlexItem>
           <Pagination
