@@ -23,9 +23,14 @@
   "settings": {
     "import/resolver": {
       "typescript": {}
+    },
+    "react": {
+      "version": "detect"
     }
   },
   "rules": {
+    "react/jsx-curly-brace-presence": ["error", { "props": "never", "children": "never" }],
+    "arrow-body-style": ["error", "as-needed"],
     "react/react-in-jsx-scope": "off",
     "camelcase": "off",
     "spaced-comment": "error",

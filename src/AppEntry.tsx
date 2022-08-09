@@ -20,15 +20,15 @@ interface AppEntryProps {
   logger?: Redux.Middleware;
 }
 
-const AppEntry: React.FunctionComponent<AppEntryProps> = (props) => {
+const AppEntry: React.FunctionComponent<AppEntryProps> = ({ logger }) => {
   const store = React.useMemo(() => {
     resetStore();
-    if (props.logger) {
-      return createStore(props.logger).store;
+    if (logger) {
+      return createStore(logger).store;
     } else {
       return createStore().store;
     }
-  }, [props.logger]);
+  }, [logger]);
 
   return (
     <Provider store={store}>

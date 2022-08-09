@@ -8,24 +8,23 @@ import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import pckg from '../package.json';
-import { CustomChromeApi } from './entry';
 import { Routes } from './Routes';
 
 // Example of how to re-implement inaccurately typed imports
-const getRegistry = _getRegistry as () => { register: ({ notifications }) => void };
+const getRegistry = _getRegistry as unknown as () => { register: ({ notifications }) => void };
 
 const App = () => {
   const history = useHistory();
-  const chrome: CustomChromeApi = useChrome();
+  const chrome = useChrome();
 
   useEffect(() => {
     let unregister;
     if (chrome) {
       const registry = getRegistry();
       registry.register({ notifications: notificationsReducer });
-      const { identifyApp, on: onChromeEvent } = chrome.init();
+      const { updateDocumentTitle, on: onChromeEvent } = chrome.init();
       // You can use directly the name of your app
-      identifyApp(pckg.insights.appname);
+      updateDocumentTitle(pckg.insights.appname);
       unregister = onChromeEvent('APP_NAVIGATION', (event) => history.push(`/${event.navId}`));
     }
 
