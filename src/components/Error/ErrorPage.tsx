@@ -14,9 +14,9 @@ interface ErrorPageProps extends RouteComponentProps {
 
 export const ErrorPageInternal = (props: ErrorPageProps) => (
   <ErrorBoundaryPage
-    headerTitle={'Content Sources'}
-    errorTitle={'Unhandled error'}
-    errorDescription={'There was a problem trying to process your request.'}
+    headerTitle='Content Sources'
+    errorTitle='Unhandled error'
+    errorDescription='There was a problem trying to process your request.'
   >
     {props.children}
   </ErrorBoundaryPage>

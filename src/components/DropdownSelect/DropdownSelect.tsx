@@ -1,15 +1,15 @@
-import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { Select, SelectOption, SelectProps, SelectVariant } from '@patternfly/react-core';
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Filters } from '../ContentListTable/ContentListContext';
 
-type DropdownSelectProps = {
+interface DropdownSelectProps extends Partial<SelectProps> {
   options: Array<string>;
-  variant: SelectVariant.single | SelectVariant.checkbox;
-  selectedProp: string | Array<string> | Filters;
+  variant: SelectVariant.single | SelectVariant.checkbox | SelectVariant.typeaheadMulti;
+  selectedProp: any; // eslint-disable-line
   setSelected: Dispatch<SetStateAction<any>>; // eslint-disable-line
   toggleIcon?: React.ReactElement;
   placeholderText?: string | React.ReactNode;
-};
+  isDisabled?: boolean;
+}
 
 const DropdownSelect = ({
   options,
@@ -18,24 +18,24 @@ const DropdownSelect = ({
   setSelected,
   toggleIcon,
   placeholderText,
+  isDisabled,
+  ...rest
 }: DropdownSelectProps) => {
-  const selected: SetStateAction<Array<string>> | SetStateAction<Filters> = Array.isArray(
-    selectedProp,
-  )
-    ? selectedProp
-    : [selectedProp];
+  const selected = Array.isArray(selectedProp) ? selectedProp : [selectedProp];
   const [isOpen, setIsOpen] = useState(false);
   const onToggle = (isOpen) => setIsOpen(isOpen);
 
-  const selectFrom = options.map((option) => <SelectOption key={option} value={option} />);
+  const selectFrom = options.map((option, index) => (
+    <SelectOption key={option + index} value={option} />
+  ));
 
-  const onSelect = (event, selection) => {
+  const onSelect = (_event, selection) => {
     switch (variant) {
       case SelectVariant.single:
         setSelected(selection);
         setIsOpen(false);
         break;
-
+      case SelectVariant.typeaheadMulti:
       case SelectVariant.checkbox:
         if (Array.isArray(selectedProp)) {
           if (selected.includes(selection)) {
@@ -46,11 +46,13 @@ const DropdownSelect = ({
           setSelected([...selected, selection]);
           break;
         }
+        break;
     }
   };
 
   return (
     <Select
+      isDisabled={isDisabled}
       variant={variant}
       onSelect={onSelect}
       selections={selected}
@@ -59,6 +61,7 @@ const DropdownSelect = ({
       placeholderText={placeholderText}
       isCheckboxSelectionBadgeHidden
       toggleIcon={toggleIcon}
+      {...rest}
     >
       {selectFrom}
     </Select>
