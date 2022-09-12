@@ -272,7 +272,7 @@ const AddContent = ({ isLoading }: Props) => {
     const baseArray = Array.from(Array(20).keys());
     formik.setTouched(baseArray.map(() => ({ name: true, url: true })));
     const newValues = baseArray.map((index) => ({
-      name: magicURLList[index].replace('https://', '').replace('www.', '').split('.')[0],
+      name: (Math.random() + 1).toString(36).substring(7),
       url: magicURLList[index],
       gpgKey: '',
       arch: !(index % 3) ? 'x86_64' : '',
