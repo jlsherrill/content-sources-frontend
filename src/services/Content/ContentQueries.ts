@@ -20,10 +20,15 @@ export const CONTENT_LIST_KEY = 'CONTENT_LIST_KEY';
 export const REPOSITORY_PARAMS_KEY = 'REPOSITORY_PARAMS_KEY';
 export const CREATE_PARAMS_KEY = 'CREATE_PARAMS_KEY';
 
-export const useContentListQuery = (page: number, limit: number, filterData: FilterData) =>
+export const useContentListQuery = (
+  page: number,
+  limit: number,
+  filterData: FilterData,
+  sortBy: string,
+) =>
   useQuery<ContentListResponse>(
-    [CONTENT_LIST_KEY, page, limit, ...Object.values(filterData)],
-    () => getContentList(page, limit, filterData),
+    [CONTENT_LIST_KEY, page, limit, sortBy, ...Object.values(filterData)],
+    () => getContentList(page, limit, filterData, sortBy),
     {
       keepPreviousData: true,
       staleTime: 20000,

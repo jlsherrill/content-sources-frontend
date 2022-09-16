@@ -18,6 +18,7 @@ import {
   Td,
   Th,
   Thead,
+  ThProps,
   Tr,
 } from '@patternfly/react-table';
 import { global_BackgroundColor_100 } from '@patternfly/react-tokens';
@@ -70,6 +71,8 @@ const ContentListTable = () => {
   const [perPage, setPerPage] = useState(storedPerPage);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editValues, setEditValues] = useState<ContentItem[]>([]);
+  const [activeSortIndex, setActiveSortIndex] = useState<number>(0);
+  const [activeSortDirection, setActiveSortDirection] = useState<'asc' | 'desc'>('asc');
 
   const [filterData, setFilterData] = useState<FilterData>({
     searchQuery: '',
@@ -94,13 +97,25 @@ const ContentListTable = () => {
     },
   } = useRepositoryParams();
 
+  const columnHeaders = ['Name', 'Url', 'Architecture', 'Versions', 'Packages', 'Status'];
+  const columnSortAttributes = [
+    'name',
+    'url',
+    'distribution_arch',
+    'distribution_versions',
+    'package_count',
+    'status',
+  ];
+  const sortString = (): string =>
+    columnSortAttributes[activeSortIndex] + ':' + activeSortDirection;
+
   const {
     isLoading,
     error,
     isError,
     isFetching,
     data = { data: [], meta: { count: 0, limit: 20, offset: 0 } },
-  } = useContentListQuery(page, perPage, filterData);
+  } = useContentListQuery(page, perPage, filterData, sortString());
 
   const { mutateAsync: deleteItem, isLoading: isDeleting } = useDeleteContentItemMutate(
     queryClient,
@@ -121,7 +136,18 @@ const ContentListTable = () => {
     setPage(newPage);
   };
 
-  const columnHeaders = ['Name', 'Url', 'Architecture', 'Versions', 'Packages', 'Status'];
+  const getSortParams = (columnIndex: number): ThProps['sort'] => ({
+    sortBy: {
+      index: activeSortIndex,
+      direction: activeSortDirection,
+      defaultDirection: 'asc', // starting sort direction when first sorting a column. Defaults to 'asc'
+    },
+    onSort: (_event, index, direction) => {
+      setActiveSortIndex(index);
+      setActiveSortDirection(direction);
+    },
+    columnIndex,
+  });
 
   const archesDisplay = (arch: string) => distArches.find(({ label }) => arch === label)?.name;
 
@@ -229,8 +255,10 @@ const ContentListTable = () => {
           >
             <Thead>
               <Tr>
-                {columnHeaders.map((columnHeader) => (
-                  <Th key={columnHeader + 'column'}>{columnHeader}</Th>
+                {columnHeaders.map((columnHeader, index) => (
+                  <Th key={columnHeader + 'column'} sort={getSortParams(index)}>
+                    {columnHeader}
+                  </Th>
                 ))}
                 <Th>
                   <Spinner size='md' className={actionTakingPlace ? '' : classes.invisible} />
@@ -239,8 +267,16 @@ const ContentListTable = () => {
             </Thead>
             <Tbody>
               {contentList.map((rowData: ContentItem) => {
-                const { uuid, name, url, distribution_arch, package_count, distribution_versions, status, last_introspection_error } =
-                  rowData;
+                const {
+                  uuid,
+                  name,
+                  url,
+                  distribution_arch,
+                  package_count,
+                  distribution_versions,
+                  status,
+                  last_introspection_error,
+                } = rowData;
                 return (
                   <Tr key={uuid}>
                     <Td>{name}</Td>
@@ -248,7 +284,7 @@ const ContentListTable = () => {
                     <Td>{archesDisplay(distribution_arch)}</Td>
                     <Td>{versionDisplay(distribution_versions)}</Td>
                     <Td>
-                      <StatusIcon status={status} error={last_introspection_error}/>
+                      <StatusIcon status={status} error={last_introspection_error} />
                     </Td>
                     <Td>{package_count}</Td>
                     <Td isActionCell>

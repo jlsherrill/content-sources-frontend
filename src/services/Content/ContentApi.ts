@@ -93,14 +93,15 @@ export const getContentList: (
   page: number,
   limit: number,
   filterData: FilterData,
-) => Promise<ContentListResponse> = async (page, limit, filterData) => {
+  sortBy: string,
+) => Promise<ContentListResponse> = async (page, limit, filterData, sortBy) => {
   const searchQuery = filterData.searchQuery;
   const versionParam = filterData.versions.join(',');
   const archParam = filterData.arches.join(',');
   const { data } = await axios.get(
     `/api/content-sources/v1/repositories/?offset=${
       (page - 1) * limit
-    }&limit=${limit}&search=${searchQuery}&version=${versionParam}&arch=${archParam}`,
+    }&limit=${limit}&search=${searchQuery}&version=${versionParam}&arch=${archParam}&sort_by=${sortBy}`,
   );
   return data;
 };
