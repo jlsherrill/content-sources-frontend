@@ -133,8 +133,15 @@ export const useDeleteContentItemMutate = (
   page: number,
   perPage: number,
   filterData: FilterData,
+  sortString: string,
 ) => {
-  const contentListKeyArray = [CONTENT_LIST_KEY, page, perPage, ...Object.values(filterData)];
+  const contentListKeyArray = [
+    CONTENT_LIST_KEY,
+    page,
+    perPage,
+    ...Object.values(filterData),
+    sortString,
+  ];
   const { notify } = useNotification();
   return useMutation(deleteContentListItem, {
     onMutate: async (uuid: string) => {

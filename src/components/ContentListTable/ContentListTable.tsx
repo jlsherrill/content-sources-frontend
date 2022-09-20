@@ -97,14 +97,14 @@ const ContentListTable = () => {
     },
   } = useRepositoryParams();
 
-  const columnHeaders = ['Name', 'Url', 'Architecture', 'Versions', 'Packages', 'Status'];
+  const columnHeaders = ['Name', 'Url', 'Architecture', 'Versions', 'Status', 'Packages'];
   const columnSortAttributes = [
     'name',
     'url',
     'distribution_arch',
     'distribution_versions',
-    'package_count',
     'status',
+    'package_count',
   ];
   const sortString = (): string =>
     columnSortAttributes[activeSortIndex] + ':' + activeSortDirection;
@@ -122,6 +122,7 @@ const ContentListTable = () => {
     page,
     perPage,
     filterData,
+    sortString(),
   );
 
   // Other update actions will be added to this later.
@@ -136,7 +137,7 @@ const ContentListTable = () => {
     setPage(newPage);
   };
 
-  const getSortParams = (columnIndex: number): ThProps['sort'] => ({
+  const sortParams = (columnIndex: number): ThProps['sort'] => ({
     sortBy: {
       index: activeSortIndex,
       direction: activeSortDirection,
@@ -256,7 +257,7 @@ const ContentListTable = () => {
             <Thead>
               <Tr>
                 {columnHeaders.map((columnHeader, index) => (
-                  <Th key={columnHeader + 'column'} sort={getSortParams(index)}>
+                  <Th key={columnHeader + 'column'} sort={sortParams(index)}>
                     {columnHeader}
                   </Th>
                 ))}
