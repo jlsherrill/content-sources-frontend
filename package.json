@@ -88,6 +88,7 @@
     "webpack-bundle-analyzer": "^4.5.0"
   },
   "insights": {
-    "appname": "content-sources"
+    "appname": "content-sources",
+    "buildrepo": "git@github.com:RedHatInsights/content-sources-frontend-build.git"
   }
 }
