@@ -1,11 +1,11 @@
 name: build-test
 on:
   push:
-    branches: [ main ]
+    branches: [ main, prod-beta ]
     paths-ignore:
       - '**.md'
   pull_request:
-    branches: [ main ]
+    branches: [ main, prod-beta ]
     paths-ignore:
       - '**.md'
 jobs:
