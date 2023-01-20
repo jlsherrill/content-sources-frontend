@@ -99,16 +99,16 @@ jobs:
         if: steps.check_custom_release.outputs.files_exists != 'true'
         env:
           APP_BUILD_DIR: ${{ github.workspace }}/dist
-        run: ${{ github.workspace }}/scripts/release.sh ${{ github.ref_name == 'main' && 'stage-beta' || github.ref_name }}
+        run: ${{ github.workspace }}/scripts/release.sh ${{ github.event.workflow_run.head_branch == 'main' && 'stage-beta' || github.event.workflow_run.head_branch }}
         working-directory: ${{ github.workspace }}
       - name: cleanup previous deploy
         working-directory: ${{ github.workspace }}
         run: rm -rf dist/.git
       - name: Run stage-stable deploy
-        if: steps.check_custom_release.outputs.files_exists != 'true' && github.ref_name == 'main'
+        if: steps.check_custom_release.outputs.files_exists != 'true' && github.event.workflow_run.head_branch == 'main'
         env:
           APP_BUILD_DIR: ${{ github.workspace }}/dist
-        run: ${{ github.workspace }}/scripts/release.sh ${{ github.ref_name == 'main' && 'stage-stable' || github.ref_name }}
+        run: ${{ github.workspace }}/scripts/release.sh ${{ github.event.workflow_run.head_branch == 'main' && 'stage-stable' || github.event.workflow_run.head_branch }}
         working-directory: ${{ github.workspace }}
       - name: Run the deploy
         if: steps.check_custom_release.outputs.files_exists == 'true'
