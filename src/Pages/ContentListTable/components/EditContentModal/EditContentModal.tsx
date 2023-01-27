@@ -536,8 +536,7 @@ const EditContentModal = ({ values, open, setClosed }: EditContentProps) => {
                         onTextChange={(value) => updateGpgKey(index, value)}
                         onClearClick={() => updateGpgKey(index, '')}
                         dropzoneProps={{
-                          accept: '.txt',
-                          maxSize: 4096,
+                          maxSize: 8096,
                           onDropRejected: (e) => console.log('onDropRejected', e),
                         }}
                         allowEditingUploadedText
