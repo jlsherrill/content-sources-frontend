@@ -73,6 +73,7 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
     setSearchQuery('');
     setSelectedVersions([]);
     setSelectedArches([]);
+    setSelectedStatuses([]);
     setFilterData({ searchQuery: '', versions: [], arches: [], statuses: [] });
   };
 
