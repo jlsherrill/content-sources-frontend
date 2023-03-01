@@ -83,12 +83,17 @@ const ContentListTable = () => {
     searchQuery: '',
     versions: [],
     arches: [],
+    statuses: [],
   });
 
-  const clearFilters = () => setFilterData({ searchQuery: '', versions: [], arches: [] });
+  const clearFilters = () =>
+    setFilterData({ searchQuery: '', versions: [], arches: [], statuses: [] });
 
   const notFiltered =
-    !filterData.arches?.length && filterData.searchQuery === '' && !filterData.versions?.length;
+    !filterData.arches?.length &&
+    filterData.searchQuery === '' &&
+    !filterData.versions?.length &&
+    !filterData.statuses?.length;
 
   const {
     isLoading: repositoryParamsLoading,
@@ -241,7 +246,7 @@ const ContentListTable = () => {
         </FlexItem>
       </Flex>
       <Hide hide={!isLoading}>
-        <Grid className={classes.mainContainer100Height}>
+        <Grid className={classes.mainContainer}>
           <SkeletonTable
             rowSize={perPage}
             colSize={columnHeaders.length}

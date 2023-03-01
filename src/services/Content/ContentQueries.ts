@@ -94,7 +94,7 @@ export const useContentListQuery = (
 
 export const useAddContentQuery = (queryClient: QueryClient, request: CreateContentRequest) => {
   const { notify } = useNotification();
-  return useMutation(() => AddContentListItems(request), {
+  return useMutation(() => AddContentListItems(request.filter((item) => !!item)), {
     onSuccess: (data: CreateContentRequestResponse) => {
       const hasPending = (data as ContentItem[]).some(({ status }) => status === 'Pending');
 
@@ -137,6 +137,72 @@ export const useAddContentQuery = (queryClient: QueryClient, request: CreateCont
         title: 'Error adding items to content list',
         description,
       });
+    },
+  });
+};
+
+export const useAddPopularRepositoryQuery = (
+  queryClient: QueryClient,
+  request: CreateContentRequest,
+  page: number,
+  perPage: number,
+  filterData?: FilterData,
+) => {
+  const { notify } = useNotification();
+  const popularRepositoriesKeyArray = [
+    POPULAR_REPOSITORIES_LIST_KEY,
+    page,
+    perPage,
+    undefined,
+    ...Object.values(filterData || {}),
+  ];
+  const filteredRequest = request.filter((item) => !!item);
+  return useMutation(() => AddContentListItems(filteredRequest), {
+    onMutate: async () => {
+      const { name } = filteredRequest[0];
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries(popularRepositoriesKeyArray);
+      // Snapshot the previous value
+      const previousPopularData: Partial<PopularRepositoriesResponse> =
+        queryClient.getQueryData(popularRepositoriesKeyArray) || {};
+
+      queryClient.setQueryData(popularRepositoriesKeyArray, () => ({
+        ...previousPopularData,
+        data: previousPopularData.data?.map((data) => {
+          if (name === data.suggested_name && !data.uuid) {
+            return { ...data, uuid: 'temp', existing_name: name };
+          }
+          return data;
+        }),
+      }));
+      return { previousData: previousPopularData };
+    },
+    onSuccess: (data: CreateContentRequestResponse) => {
+      const hasPending = (data as ContentItem[]).some(({ status }) => status === 'Pending');
+      notify({
+        variant: AlertVariant.success,
+        title: `Custom repository "${data?.[0]?.name}" added`,
+        description: hasPending
+          ? 'Repository introspection in progress'
+          : 'Repository introspection data already available',
+      });
+
+      queryClient.invalidateQueries(CONTENT_LIST_KEY);
+      queryClient.invalidateQueries(POPULAR_REPOSITORIES_LIST_KEY);
+    },
+    onError: (err, _newData, context) => {
+      if (context) {
+        const { previousData } = context as {
+          previousData: PopularRepositoriesResponse;
+        };
+        queryClient.setQueryData(popularRepositoriesKeyArray, previousData);
+        const error = err as Error; // Forced Type
+        notify({
+          variant: AlertVariant.danger,
+          title: 'Error deleting item from popularRepo',
+          description: error?.message,
+        });
+      }
     },
   });
 };
@@ -191,6 +257,62 @@ export const useValidateContentList = () => {
         title: 'Error validating form fields',
         description: error?.message,
       });
+    },
+  });
+};
+
+export const useDeletePopularRepositoryMutate = (
+  queryClient: QueryClient,
+  page: number,
+  perPage: number,
+  filterData?: FilterData,
+) => {
+  const popularRepositoriesKeyArray = [
+    POPULAR_REPOSITORIES_LIST_KEY,
+    page,
+    perPage,
+    undefined,
+    ...Object.values(filterData || {}),
+  ];
+  const { notify } = useNotification();
+  return useMutation(deleteContentListItem, {
+    onMutate: async (uuid: string) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries(popularRepositoriesKeyArray);
+      // Snapshot the previous value
+      const previousPopularData: Partial<PopularRepositoriesResponse> =
+        queryClient.getQueryData(popularRepositoriesKeyArray) || {};
+
+      queryClient.setQueryData(popularRepositoriesKeyArray, () => ({
+        ...previousPopularData,
+        data: previousPopularData.data?.map((data) => {
+          if (data.uuid === uuid) {
+            return { ...data, uuid: undefined };
+          }
+          return data;
+        }),
+      }));
+      // Return a context object with the snapshotted value
+      return { previousData: previousPopularData, queryClient };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(CONTENT_LIST_KEY);
+      queryClient.invalidateQueries(POPULAR_REPOSITORIES_LIST_KEY);
+    },
+    // If the mutation fails, use the context returned from onMutate to roll back
+    onError: (err, _newData, context) => {
+      if (context) {
+        const { previousData } = context as {
+          previousData: PopularRepositoriesResponse;
+        };
+        queryClient.setQueryData(popularRepositoriesKeyArray, previousData);
+        const error = err as Error; // Forced Type
+        notify({
+          variant: AlertVariant.danger,
+          title: 'Error deleting item from popularRepo',
+          description: error?.message,
+        });
+      }
     },
   });
 };
