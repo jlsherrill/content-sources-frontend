@@ -106,6 +106,7 @@ export type FilterData = {
   searchQuery: string;
   versions: Array<string>;
   arches: Array<string>;
+  statuses: Array<string>;
 };
 
 export type ValidateItem = {
@@ -171,10 +172,11 @@ export const getContentList: (
   const searchQuery = filterData.searchQuery;
   const versionParam = filterData.versions.join(',');
   const archParam = filterData.arches.join(',');
+  const statusParam = filterData?.statuses?.join(',');
   const { data } = await axios.get(
     `/api/content-sources/v1/repositories/?offset=${
       (page - 1) * limit
-    }&limit=${limit}&search=${searchQuery}&version=${versionParam}&arch=${archParam}&sort_by=${sortBy}`,
+    }&limit=${limit}&search=${searchQuery}&version=${versionParam}&status=${statusParam}&arch=${archParam}&sort_by=${sortBy}`,
   );
   return data;
 };

@@ -21,8 +21,8 @@ const EPEL_9 = {
 jest.mock('../../services/Content/ContentQueries', () => ({
   useRepositoryParams: jest.fn(),
   usePopularRepositoriesQuery: jest.fn(),
-  useAddContentQuery: () => ({ isLoading: false }),
-  useDeleteContentItemMutate: () => ({ isLoading: false }),
+  useAddPopularRepositoryQuery: () => ({ isLoading: false }),
+  useDeletePopularRepositoryMutate: () => ({ isLoading: false }),
   useFetchGpgKey: () => ({ fetchGpgKey: () => '' }),
 }));
 

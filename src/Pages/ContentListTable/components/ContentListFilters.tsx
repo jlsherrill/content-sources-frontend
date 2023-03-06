@@ -50,19 +50,21 @@ const useStyles = createUseStyles({
   },
 });
 
-export type Filters = 'Name/URL' | 'Version' | 'Architecture';
+const statusValues = ['Invalid', 'Pending', 'Unavailable', 'Valid'];
+export type Filters = 'Name/URL' | 'Version' | 'Architecture' | 'Status';
 
 const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => {
   const classes = useStyles();
   const { rbac } = useAppContext();
   const queryClient = useQueryClient();
-  const filters = ['Name/URL', 'Version', 'Architecture'];
+  const filters = ['Name/URL', 'Version', 'Architecture', 'Status'];
   const [filterType, setFilterType] = useState<Filters>('Name/URL');
   const [versionNamesLabels, setVersionNamesLabels] = useState({});
   const [archNamesLabels, setArchNamesLabels] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
   const [selectedArches, setSelectedArches] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   const { distribution_arches = [], distribution_versions = [] } =
     queryClient.getQueryData<RepositoryParamsResponse>(REPOSITORY_PARAMS_KEY) || {};
@@ -71,7 +73,8 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
     setSearchQuery('');
     setSelectedVersions([]);
     setSelectedArches([]);
-    setFilterData({ searchQuery: '', versions: [], arches: [] });
+    setSelectedStatuses([]);
+    setFilterData({ searchQuery: '', versions: [], arches: [], statuses: [] });
   };
 
   useEffect(() => {
@@ -79,8 +82,12 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
     if (
       filterData.arches.length === 0 &&
       filterData.versions.length === 0 &&
+      filterData.statuses.length === 0 &&
       filterData.searchQuery === '' &&
-      (searchQuery !== '' || selectedArches.length !== 0 || selectedVersions.length !== 0)
+      (searchQuery !== '' ||
+        selectedArches.length !== 0 ||
+        selectedVersions.length !== 0 ||
+        selectedStatuses.length !== 0)
     ) {
       clearFilters();
     }
@@ -90,14 +97,17 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
     searchQuery: debouncedSearchQuery,
     selectedVersions: debouncedSelectedVersions,
     selectedArches: debouncedSelectedArches,
+    selectedStatuses: debouncedSelectedStatuses,
   } = useDebounce({
     searchQuery,
     selectedVersions,
     selectedArches,
+    selectedStatuses,
   });
 
   const getLabels = (type: string, names: Array<string>) => {
     const namesLabels = type === 'arch' ? distribution_arches : distribution_versions;
+
     const labels: Array<string> = [];
     names.forEach((name) => {
       const found = namesLabels.find((v) => v.name === name);
@@ -113,8 +123,14 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
       searchQuery: debouncedSearchQuery,
       versions: getLabels('version', debouncedSelectedVersions),
       arches: getLabels('arch', debouncedSelectedArches),
+      statuses: debouncedSelectedStatuses,
     });
-  }, [debouncedSearchQuery, debouncedSelectedVersions, debouncedSelectedArches]);
+  }, [
+    debouncedSearchQuery,
+    debouncedSelectedVersions,
+    debouncedSelectedArches,
+    debouncedSelectedStatuses,
+  ]);
 
   const deleteItem = (id: string, chips, setChips) => {
     const copyOfChips = [...chips];
@@ -181,6 +197,19 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
             placeholderText='Filter by architecture'
           />
         );
+      case 'Status':
+        return (
+          <DropdownSelect
+            toggleId='statusSelect'
+            ouiaId='filter_status'
+            isDisabled={isLoading}
+            options={statusValues}
+            variant={SelectVariant.checkbox}
+            selectedProp={selectedStatuses}
+            setSelected={setSelectedStatuses}
+            placeholderText='Filter by status'
+          />
+        );
       default:
         return <></>;
     }
@@ -215,7 +244,16 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
           <AddContent isDisabled={isLoading} />
         </ConditionalTooltip>
       </FlexItem>
-      <Hide hide={!(selectedVersions.length || selectedArches.length || searchQuery != '')}>
+      <Hide
+        hide={
+          !(
+            selectedVersions.length ||
+            selectedArches.length ||
+            selectedStatuses.length ||
+            searchQuery != ''
+          )
+        }
+      >
         <FlexItem fullWidth={{ default: 'fullWidth' }} className={classes.chipsContainer}>
           <ChipGroup categoryName='Version'>
             {selectedVersions.map((version) => (
@@ -234,6 +272,16 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
               </Chip>
             ))}
           </ChipGroup>
+          <ChipGroup categoryName='Status'>
+            {selectedStatuses.map((status) => (
+              <Chip
+                key={status}
+                onClick={() => deleteItem(status, selectedStatuses, setSelectedStatuses)}
+              >
+                {status}
+              </Chip>
+            ))}
+          </ChipGroup>
           {searchQuery !== '' && (
             <ChipGroup categoryName='Name/URL'>
               <Chip key='search_chip' onClick={() => setSearchQuery('')}>
@@ -243,7 +291,8 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
           )}
           {((debouncedSearchQuery !== '' && searchQuery !== '') ||
             !!selectedVersions?.length ||
-            !!selectedArches?.length) && (
+            !!selectedArches?.length ||
+            !!selectedStatuses?.length) && (
             <Button className={classes.clearFilters} onClick={clearFilters} variant='link' isInline>
               Clear filters
             </Button>

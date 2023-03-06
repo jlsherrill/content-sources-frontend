@@ -23,11 +23,11 @@ import { SkeletonTable } from '@redhat-cloud-services/frontend-components';
 
 import {
   usePopularRepositoriesQuery,
-  useDeleteContentItemMutate,
+  useDeletePopularRepositoryMutate,
   useRepositoryParams,
-  useAddContentQuery,
+  useAddPopularRepositoryQuery,
 } from '../../services/Content/ContentQueries';
-import { CreateContentRequest } from '../../services/Content/ContentApi';
+import { CreateContentRequest, FilterData } from '../../services/Content/ContentApi';
 import Hide from '../../components/Hide/Hide';
 import { useQueryClient } from 'react-query';
 import { useAppContext } from '../../middleware/AppContext';
@@ -43,10 +43,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
   },
-  mainContainer100Height: {
-    composes: ['$mainContainer'], // This extends another class within this stylesheet
-    minHeight: '100%',
-  },
+
   topContainer: {
     justifyContent: 'space-between',
     padding: '16px 24px', // This is needed
@@ -125,9 +122,12 @@ const PopularRepositoriesTable = () => {
     },
   } = useRepositoryParams();
 
-  const { mutateAsync: addContentQuery, isLoading: isAdding } = useAddContentQuery(
+  const { mutateAsync: addContentQuery, isLoading: isAdding } = useAddPopularRepositoryQuery(
     queryClient,
     selectedData,
+    page,
+    perPage,
+    { searchQuery: debouncedSearchValue } as FilterData,
   );
 
   useEffect(() => {
@@ -146,7 +146,10 @@ const PopularRepositoriesTable = () => {
 
   useEffect(() => {
     if (selectedData.length != 0) {
-      addContentQuery().then(undefined, () => setSelectedData([]));
+      addContentQuery().then(
+        () => setSelectedData([]),
+        () => setSelectedData([]),
+      );
     }
   }, [selectedData]);
 
@@ -173,10 +176,11 @@ const PopularRepositoriesTable = () => {
       .map(({ name }) => name)
       .join(', ');
 
-  const { mutateAsync: deleteItem, isLoading: isDeleting } = useDeleteContentItemMutate(
+  const { mutateAsync: deleteItem, isLoading: isDeleting } = useDeletePopularRepositoryMutate(
     queryClient,
     page,
     perPage,
+    { searchQuery: debouncedSearchValue } as FilterData,
   );
 
   // Other update actions will be added to this later.
@@ -281,7 +285,7 @@ const PopularRepositoriesTable = () => {
         </FlexItem>
       </Flex>
       <Hide hide={!isLoading}>
-        <Grid className={classes.mainContainer100Height}>
+        <Grid className={classes.mainContainer}>
           <SkeletonTable
             rowSize={perPage}
             colSize={columnHeaders.length}
@@ -365,7 +369,7 @@ const PopularRepositoriesTable = () => {
                       >
                         {uuid ? (
                           <Button
-                            isDisabled={uuid === selectedUUID}
+                            isDisabled={uuid === selectedUUID || isAdding}
                             onClick={() => setSelectedUUID(uuid)}
                             variant='danger'
                             ouiaId='remove_popular_repo'
@@ -375,19 +379,19 @@ const PopularRepositoriesTable = () => {
                         ) : (
                           <Button
                             variant='secondary'
-                            isDisabled={selectedData[key]?.url === url}
-                            onClick={() =>
-                              setSelectedData([
-                                {
-                                  name: suggested_name,
-                                  url,
-                                  distribution_versions,
-                                  distribution_arch,
-                                  gpg_key,
-                                  metadata_verification,
-                                },
-                              ])
-                            }
+                            isDisabled={selectedData[key]?.url === url || isFetching || isDeleting}
+                            onClick={() => {
+                              const newData: CreateContentRequest = [];
+                              newData[key] = {
+                                name: suggested_name,
+                                url,
+                                distribution_versions,
+                                distribution_arch,
+                                gpg_key,
+                                metadata_verification,
+                              };
+                              setSelectedData(newData);
+                            }}
                             ouiaId='add_popular_repo'
                           >
                             Add
