@@ -108,7 +108,6 @@ const useStyles = createUseStyles({
   },
 });
 
-
 const defaultValues: FormikValues = {
   name: '',
   url: '',
@@ -370,7 +369,7 @@ const AddContent = ({ isDisabled: isButtonDisabled }: Props) => {
     });
   };
 
- const { notify } = useNotification();
+  const { notify } = useNotification();
 
   return (
     <>

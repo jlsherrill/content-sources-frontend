@@ -1,9 +1,6 @@
 import { ContentItem } from '../../../../services/Content/ContentApi';
 import { mapFormikToEditAPIValues, mapToDefaultFormikValues } from './helpers';
 
-
-
-
 it('mapFormikToEditAPIValues', () => {
   const values = [
     {
@@ -45,6 +42,8 @@ it('mapToDefaultFormikValues', () => {
       distribution_arch: 'stuffAndThings',
       status: 'stuffAndThings',
       last_introspection_error: 'stuffAndThings',
+      last_introspection_time: 'stuffAndThings',
+      failed_introspections_count: 0,
       account_id: 'stuffAndThings',
       org_id: 'stuffAndThings',
       gpg_key: 'stuffAndThings',

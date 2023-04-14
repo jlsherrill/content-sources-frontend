@@ -13,6 +13,8 @@ it('Render PackageCount for Invalid state', async () => {
     gpg_key: '',
     distribution_versions: [''],
     last_introspection_error: '',
+    last_introspection_time: '2023-03-07 17:13:48.619192 -0500 EST',
+    failed_introspections_count: 0,
     metadata_verification: false,
     org_id: 'acme',
   };
@@ -33,6 +35,8 @@ it('Render PackageCount for Pending state', () => {
     gpg_key: '',
     distribution_versions: [''],
     last_introspection_error: '',
+    last_introspection_time: '2023-03-07 17:13:48.619192 -0500 EST',
+    failed_introspections_count: 0,
     metadata_verification: false,
     org_id: 'acme',
   };
@@ -53,6 +57,8 @@ it('Render PackageCount normally', () => {
     gpg_key: '',
     distribution_versions: ['el8'],
     last_introspection_error: '',
+    last_introspection_time: '2023-03-07 17:13:48.619192 -0500 EST',
+    failed_introspections_count: 0,
     metadata_verification: false,
     org_id: 'acme',
   };

@@ -10,6 +10,7 @@ jest.mock('../../services/Content/ContentQueries', () => ({
   useAddContentQuery: () => ({ isLoading: false }),
   useValidateContentList: () => ({ isLoading: false }),
   useDeleteContentItemMutate: () => ({ isLoading: false }),
+  useIntrospectRepositoryMutate: () => ({ isLoading: false }),
   useFetchGpgKey: () => ({ fetchGpgKey: () => '' }),
 }));
 

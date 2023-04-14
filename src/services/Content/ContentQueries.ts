@@ -1,8 +1,9 @@
 import { AlertVariant } from '@patternfly/react-core';
 import { useState } from 'react';
 import { QueryClient, useMutation, useQuery } from 'react-query';
+import { cloneDeep } from 'lodash';
 
-import { useNotification } from './../Notifications/Notifications';
+import { useNotification } from '../Notifications/Notifications';
 import {
   ContentListResponse,
   deleteContentListItem,
@@ -23,6 +24,8 @@ import {
   PopularRepositoriesResponse,
   CreateContentRequestResponse,
   ContentItem,
+  introspectRepository,
+  IntrospectRepositoryRequestItem,
 } from './ContentApi';
 
 export const CONTENT_LIST_KEY = 'CONTENT_LIST_KEY';
@@ -63,7 +66,9 @@ export const useContentListQuery = (
     () => getContentList(page, limit, filterData, sortBy),
     {
       onSuccess: (data) => {
-        const containsPending = data?.data?.some(({ status }) => status === 'Pending');
+        const containsPending = data?.data?.some(
+          ({ status }) => status === 'Pending' || status === '',
+        );
         if (polling && containsPending) {
           // Count each consecutive time polling occurs
           setPollCount(pollCount + 1);
@@ -443,3 +448,85 @@ export const useGetPackagesQuery = (
       },
     },
   );
+
+export const useIntrospectRepositoryMutate = (
+  queryClient: QueryClient,
+  page: number,
+  perPage: number,
+  filterData?: FilterData,
+  sortString?: string,
+) => {
+  // Below MUST match the "useContentList" key found above or updates will fail.
+  const contentListKeyArray = [
+    CONTENT_LIST_KEY,
+    page,
+    perPage,
+    sortString,
+    ...Object.values(filterData || {}),
+  ];
+  const { notify } = useNotification();
+  return useMutation(introspectRepository, {
+    onMutate: async (item: IntrospectRepositoryRequestItem) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries(contentListKeyArray);
+      // Snapshot the previous value
+      const previousData: Partial<ContentListResponse> =
+        queryClient.getQueryData(contentListKeyArray) || {};
+
+      const previousStatus = previousData.data?.find((data) => item.uuid == data.uuid)?.status;
+      const newData = cloneDeep(previousData);
+      if (previousStatus) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        newData.data.filter((data) => item.uuid == data.uuid).at(0).status = 'Pending';
+      }
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(contentListKeyArray, () => ({
+        ...newData,
+      }));
+      // Return a context object with the snapshotted value
+      return { previousData, queryClient };
+    },
+    onSuccess: () => {
+      notify({
+        variant: AlertVariant.success,
+        title: 'Repository introspection in progress',
+      });
+    },
+    // If the mutation fails, use the context returned from onMutate to roll back
+    onError: (err: { response?: { data: ErrorResponse } }, _newData, context) => {
+      if (context) {
+        const error = err as Error; // Forced Type
+
+        let description = error?.message;
+        switch (typeof err?.response?.data) {
+          case 'string':
+            description = err?.response?.data;
+            break;
+          case 'object':
+            // Only show the first error
+            err?.response?.data.errors?.find(({ detail }) => {
+              if (detail) {
+                description = detail;
+              }
+            })?.detail;
+            break;
+          default:
+            break;
+        }
+
+        const { previousData } = context as {
+          previousData: ContentListResponse;
+        };
+        queryClient.setQueryData(contentListKeyArray, previousData);
+
+        notify({
+          variant: AlertVariant.danger,
+          title: 'Error introspecting repository',
+          description,
+        });
+      }
+    },
+  });
+};

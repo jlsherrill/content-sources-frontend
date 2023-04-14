@@ -17,6 +17,8 @@ const rowData: ContentItem = {
   org_id: '',
   status: '',
   last_introspection_error: '',
+  last_introspection_time: '2023-03-07 17:13:48.619192 -0500 EST',
+  failed_introspections_count: 0,
   gpg_key: '',
   metadata_verification: false,
 };

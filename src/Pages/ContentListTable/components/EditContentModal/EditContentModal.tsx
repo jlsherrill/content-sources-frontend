@@ -34,7 +34,13 @@ import {
 import { RepositoryParamsResponse } from '../../../../services/Content/ContentApi';
 import DropdownSelect from '../../../../components/DropdownSelect/DropdownSelect';
 import { useQueryClient } from 'react-query';
-import { failedFileUpload, isValidURL, makeValidationSchema, mapValidationData, maxUploadSize } from '../AddContent/helpers';
+import {
+  failedFileUpload,
+  isValidURL,
+  makeValidationSchema,
+  mapValidationData,
+  maxUploadSize,
+} from '../AddContent/helpers';
 import ContentValidity from '../AddContent/components/ContentValidity';
 import {
   EditContentProps,
@@ -538,8 +544,8 @@ const EditContentModal = ({ values, open, setClosed }: EditContentProps) => {
                         onTextChange={(value) => updateGpgKey(index, value)}
                         onClearClick={() => updateGpgKey(index, '')}
                         dropzoneProps={{
-                            maxSize: maxUploadSize,
-                            onDropRejected: (files) => failedFileUpload(files, notify),
+                          maxSize: maxUploadSize,
+                          onDropRejected: (files) => failedFileUpload(files, notify),
                         }}
                         allowEditingUploadedText
                         browseButtonText='Upload'

@@ -11,20 +11,33 @@ const green = global_success_color_200.value;
 const gold = global_warning_color_200.value;
 const blue = global_info_color_200.value;
 
-const useStyles = createUseStyles({
-  red: { color: red, fontWeight: 'bold', fontSize: '14px' },
-  green: { color: green, fontWeight: 'bold', fontSize: '14px' },
-  gold: { color: gold, fontWeight: 'bold', fontSize: '14px' },
-  blue: { color: blue, fontWeight: 'bold', fontSize: '14px' },
-});
-
 interface Props {
   color: 'red' | 'green' | 'gold' | 'blue';
+  isLink?: boolean;
   children?: React.ReactNode;
 }
 
-const StatusText = ({ color, children }: Props) => {
-  const classes = useStyles();
+const useStyles = ({ isLink }: Props) =>
+  createUseStyles({
+    fontStyle: {
+      fontWeight: 'bold',
+      fontSize: '14px',
+      ...(isLink
+        ? {
+            textDecoration: 'grey dotted underline',
+            cursor: 'pointer',
+          }
+        : {}),
+    },
+    red: { extend: 'fontStyle', color: red },
+    green: { extend: 'fontStyle', color: green },
+    gold: { extend: 'fontStyle', color: gold },
+    blue: { extend: 'fontStyle', color: blue },
+  });
+
+const StatusText = (props: Props) => {
+  const classes = useStyles(props)();
+  const { color, children } = props;
 
   return <span className={classes[color]}>{children}</span>;
 };

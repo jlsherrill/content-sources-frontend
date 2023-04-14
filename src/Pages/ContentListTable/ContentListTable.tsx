@@ -24,12 +24,17 @@ import {
 import { global_BackgroundColor_100 } from '@patternfly/react-tokens';
 import { useCallback, useState } from 'react';
 import { createUseStyles } from 'react-jss';
-import { ContentItem, FilterData } from '../../services/Content/ContentApi';
+import {
+  ContentItem,
+  FilterData,
+  IntrospectRepositoryRequestItem,
+} from '../../services/Content/ContentApi';
 import { SkeletonTable } from '@redhat-cloud-services/frontend-components';
 
 import {
   useContentListQuery,
   useDeleteContentItemMutate,
+  useIntrospectRepositoryMutate,
   useRepositoryParams,
 } from '../../services/Content/ContentQueries';
 import ContentListFilters from './components/ContentListFilters';
@@ -42,6 +47,7 @@ import UrlWithExternalIcon from '../../components/UrlWithLinkIcon/UrlWithLinkIco
 import PackageCount from './components/PackageCount';
 import { useAppContext } from '../../middleware/AppContext';
 import ConditionalTooltip from '../../components/ConditionalTooltip/ConditionalTooltip';
+import dayjs from 'dayjs';
 
 const useStyles = createUseStyles({
   mainContainer: {
@@ -110,6 +116,7 @@ const ContentListTable = () => {
     'distribution_arch',
     'distribution_versions',
     'package_count',
+    'last_introspection_time',
     'status',
   ];
 
@@ -132,8 +139,14 @@ const ContentListTable = () => {
     sortString(),
   );
 
+  const { mutateAsync: introspectRepository, isLoading: isIntrospecting } =
+    useIntrospectRepositoryMutate(queryClient, page, perPage, filterData, sortString());
+
+  const introspectRepoForUuid = (uuid: string): Promise<void> =>
+    introspectRepository({ uuid: uuid, reset_count: true } as IntrospectRepositoryRequestItem);
+
   // Other update actions will be added to this later.
-  const actionTakingPlace = isDeleting || isFetching || repositoryParamsLoading;
+  const actionTakingPlace = isDeleting || isFetching || repositoryParamsLoading || isIntrospecting;
 
   const onSetPage: OnSetPage = (_, newPage) => setPage(newPage);
 
@@ -157,7 +170,14 @@ const ContentListTable = () => {
     columnIndex,
   });
 
-  const columnHeaders = ['Name', 'Architecture', 'Versions', 'Packages', 'Status'];
+  const columnHeaders = [
+    'Name',
+    'Architecture',
+    'Versions',
+    'Packages',
+    'Last Introspection',
+    'Status',
+  ];
 
   const archesDisplay = (arch: string) => distArches.find(({ label }) => arch === label)?.name;
 
@@ -166,6 +186,9 @@ const ContentListTable = () => {
       .filter(({ label }) => versions?.includes(label))
       .map(({ name }) => name)
       .join(', ');
+
+  const lastIntrospectionDisplay = (time?: string): string =>
+    time === '' || time === undefined ? 'Never' : dayjs(time).fromNow();
 
   // Error is caught in the wrapper component
   if (isError) throw error;
@@ -195,6 +218,11 @@ const ContentListTable = () => {
           setEditValues([rowData]);
           setEditModalOpen(true);
         },
+      },
+      {
+        isDisabled: actionTakingPlace || rowData?.status == 'Retrying',
+        title: 'Introspect Now',
+        onClick: () => introspectRepoForUuid(rowData?.uuid),
       },
     ],
     [actionTakingPlace],
@@ -281,8 +309,7 @@ const ContentListTable = () => {
                   url,
                   distribution_arch,
                   distribution_versions,
-                  status,
-                  last_introspection_error,
+                  last_introspection_time,
                 } = rowData;
                 return (
                   <Tr key={uuid}>
@@ -296,13 +323,18 @@ const ContentListTable = () => {
                     <Td>
                       <PackageCount rowData={rowData} />
                     </Td>
+                    <Td>{lastIntrospectionDisplay(last_introspection_time)}</Td>
                     <Td>
-                      <StatusIcon status={status} error={last_introspection_error} />
+                      <StatusIcon rowData={rowData} retryHandler={introspectRepoForUuid} />
                     </Td>
                     <Td isActionCell>
                       <ConditionalTooltip
-                        content='You do not have the required permissions to perform this action.'
-                        show={!rbac?.write}
+                        content={
+                          rowData?.status == 'Pending'
+                            ? 'Introspection is in progress'
+                            : 'You do not have the required permissions to perform this action.'
+                        }
+                        show={!rbac?.write || rowData?.status === 'Pending'}
                         setDisabled
                       >
                         <ActionsColumn items={rowActions(rowData)} />

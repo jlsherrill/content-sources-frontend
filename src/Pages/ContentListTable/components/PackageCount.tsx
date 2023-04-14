@@ -26,7 +26,7 @@ const PackageCount = ({ rowData }: Props) => {
 
   if (!rowData.package_count && rowData.status === 'Pending') {
     return (
-      <Tooltip isContentLeftAligned content='Repository has not been introspected yet'>
+      <Tooltip isContentLeftAligned content='Introspection is in progress'>
         <Text className={classes.text}>N/A</Text>
       </Tooltip>
     );

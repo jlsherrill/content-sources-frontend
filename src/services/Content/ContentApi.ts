@@ -11,6 +11,8 @@ export interface ContentItem {
   org_id: string;
   status: string;
   last_introspection_error: string;
+  last_introspection_time: string;
+  failed_introspections_count: number;
   gpg_key: string;
   metadata_verification: boolean;
 }
@@ -146,6 +148,11 @@ export type PackagesResponse = {
   meta: Meta;
 };
 
+export type IntrospectRepositoryRequestItem = {
+  uuid: string;
+  reset_count?: boolean;
+};
+
 export const getPopularRepositories: (
   page: number,
   limit: number,
@@ -243,6 +250,16 @@ export const getPackages: (
     `/api/content-sources/v1.0/repositories/${uuid}/rpms?offset=${
       (page - 1) * limit
     }&limit=${limit}&search=${searchQuery}&sort_by=${sortBy}`,
+  );
+  return data;
+};
+
+export const introspectRepository: (
+  request: IntrospectRepositoryRequestItem,
+) => Promise<void> = async (request) => {
+  const { data } = await axios.post(
+    `/api/content-sources/v1/repositories/${request.uuid}/introspect/`,
+    { reset_count: request.reset_count },
   );
   return data;
 };
