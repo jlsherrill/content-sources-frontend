@@ -174,6 +174,7 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
       case 'Version':
         return (
           <DropdownSelect
+            toggleAriaLabel='filter version'
             toggleId='versionSelect'
             ouiaId='filter_version'
             isDisabled={isLoading}
@@ -187,6 +188,7 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
       case 'Architecture':
         return (
           <DropdownSelect
+            toggleAriaLabel='filter architecture'
             toggleId='archSelect'
             ouiaId='filter_arch'
             isDisabled={isLoading}
@@ -200,6 +202,7 @@ const ContentListFilters = ({ isLoading, setFilterData, filterData }: Props) => 
       case 'Status':
         return (
           <DropdownSelect
+            toggleAriaLabel='filter status'
             toggleId='statusSelect'
             ouiaId='filter_status'
             isDisabled={isLoading}
