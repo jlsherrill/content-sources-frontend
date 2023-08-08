@@ -28,7 +28,7 @@ export IQE_FILTER_EXPRESSION=""
 export IQE_ENV="ephemeral"
 export IQE_SELENIUM="true"
 export IQE_CJI_TIMEOUT="30m"
-export DEPLOY_TIMEOUT="900"  # 15min
+export DEPLOY_TIMEOUT="1500"  # 25min
 export DEPLOY_FRONTENDS="true"
 
 set -exv
