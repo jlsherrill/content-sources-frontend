@@ -1,21 +1,41 @@
 name: Release workflow
 on:
-  workflow_run:
-    workflows: [build-test]
+  push:    
     branches: [main, prod-beta, prod-stable]
-    types:
-      - completed
+
 jobs:
-  pull-scripts:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  build-test-release:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.14.0]
+    env:
+      COMMIT_AUTHOR_USERNAME: GitHub actions
+      COMMIT_AUTHOR_EMAIL: actions@github.com
+ 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+  
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+  
+      - name: Install Dependencies
+        run: npm ci
+  
+      - name: Tests
+        run: npm test
+  
+      - name: Lint
+        run: npm run lint
+  
+      - name: Build
+        run: npm run build --if-present
+
       - uses: actions/checkout@v3
       - run: mkdir ${{ github.workspace }}/scripts
-      - name: Set the sha
-        id: set_sha
-        run: |
-          echo "sha=$GITHUB_SHA" >> "$GITHUB_ENV"
       - name: Pull release file
         run: curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/release.sh > ${{ github.workspace }}/scripts/release.sh
       - run: chmod +x "${{ github.workspace }}/scripts/release.sh"
@@ -25,26 +45,12 @@ jobs:
       - name: Pull quay push file
         run: curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/quay_push.sh > ${{ github.workspace }}/scripts/quay_push.sh
       - run: chmod +x "${{ github.workspace }}/scripts/quay_push.sh"
-      - uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/scripts/*
-          key: ${{ env.sha }}-scripts
-  pull-jenkins:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
-    steps:
+
       - uses: actions/checkout@v3
       - run: mkdir ${{ github.workspace }}/.travis
       - name: Pull the file
         run: curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/Jenkinsfile > ${{ github.workspace }}/.travis/58231b16fdee45a03a4ee3cf94a9f2c3
-      - uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/.travis/58231b16fdee45a03a4ee3cf94a9f2c3
-          key: ${{ env.sha }}-travis
-  set-ssh:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
-    steps:
+
       - name: Add SSH key
         run: |
             mkdir -p /home/runner/.ssh
@@ -59,14 +65,8 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: /home/runner/.ssh/*
-          key: ${{ env.sha }}-ssh
-  Release-to-build:
-    needs: [pull-scripts, pull-jenkins, set-ssh]
-    runs-on: ubuntu-latest
-    env:
-      COMMIT_AUTHOR_USERNAME: GitHub actions
-      COMMIT_AUTHOR_EMAIL: actions@github.com
-    steps:
+          key: ${{ github.sha }}-ssh
+
       - uses: actions/checkout@v3
       - name: Set env variables
         run: |
@@ -79,20 +79,20 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: /home/runner/.ssh/*
-          key: ${{ env.sha }}-ssh
+          key: ${{ github.sha }}-ssh
       - uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/scripts/*
-          key: ${{ env.sha }}-scripts
+          key: ${{ github.sha }}-scripts
       - uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/.travis/58231b16fdee45a03a4ee3cf94a9f2c3
-          key: ${{ env.sha }}-travis
+          key: ${{ github.sha }}-travis
       - uses: actions/cache@v3
         id: restore-build
         with:
           path: ${{ github.workspace }}/dist/*
-          key: ${{ env.sha }}
+          key: ${{ github.sha }}
       - name: Check custom_release existence
         id: check_custom_release
         uses: andstor/file-existence-action@v1
@@ -120,5 +120,5 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/dist/*
-          key: ${{ env.sha }}-released
+          key: ${{ github.sha }}-released
 
