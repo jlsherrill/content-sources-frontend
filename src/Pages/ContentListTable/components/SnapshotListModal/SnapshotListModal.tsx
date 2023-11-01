@@ -72,7 +72,7 @@ export default function SnapshotListModal() {
   const [perPage, setPerPage] = useState(storedPerPage);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSortIndex, setActiveSortIndex] = useState<number>(0);
-  const [activeSortDirection, setActiveSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [activeSortDirection, setActiveSortDirection] = useState<'asc' | 'desc'>('desc');
 
   const columnHeaders = ['Snapshots', 'Change', 'Packages', 'Errata'];
 
@@ -119,7 +119,7 @@ export default function SnapshotListModal() {
       sortBy: {
         index: activeSortIndex,
         direction: activeSortDirection,
-        defaultDirection: 'asc', // starting sort direction when first sorting a column. Defaults to 'asc'
+        defaultDirection: 'desc', // starting sort direction when first sorting a column. Defaults to 'desc'
       },
       onSort: (_event, index, direction) => {
         setActiveSortIndex(index);
