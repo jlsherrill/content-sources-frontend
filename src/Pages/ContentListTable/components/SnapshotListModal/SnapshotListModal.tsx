@@ -242,11 +242,9 @@ export default function SnapshotListModal() {
                       <Td>
                         <ChangedArrows
                           addedCount={
-                            (added_counts?.['rpm.advisory'] || 0) +
                             (added_counts?.['rpm.package'] || 0)
                           }
                           removedCount={
-                            (removed_counts?.['rpm.advisory'] || 0) +
                             (removed_counts?.['rpm.package'] || 0)
                           }
                         />

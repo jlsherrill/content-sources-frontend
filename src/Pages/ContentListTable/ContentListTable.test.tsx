@@ -103,8 +103,7 @@ it('Render with a single row', async () => {
     expect(
       queryByText(
         (
-          (defaultSnapshotItem.added_counts['rpm.package'] as number) +
-          (defaultSnapshotItem.added_counts['rpm.advisory'] as number)
+          (defaultSnapshotItem.added_counts['rpm.package'] as number)
         )?.toString(),
       ),
     ).toBeInTheDocument(),
@@ -113,8 +112,7 @@ it('Render with a single row', async () => {
     expect(
       queryByText(
         (
-          (defaultSnapshotItem.removed_counts['rpm.package'] as number) +
-          (defaultSnapshotItem.removed_counts['rpm.advisory'] as number)
+          (defaultSnapshotItem.removed_counts['rpm.package'] as number)
         )?.toString(),
       ),
     ).toBeInTheDocument(),

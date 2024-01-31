@@ -202,8 +202,8 @@ export const defaultSnapshotItem: SnapshotItem = {
     'rpm.packagegroup': 20,
   },
   added_counts: {
-    'rpm.advisory': 3864,
-    'rpm.package': 17208,
+    'rpm.advisory': 100,
+    'rpm.package': 200,
     'rpm.packagecategory': 1,
     'rpm.packageenvironment': 1,
     'rpm.packagegroup': 20,
