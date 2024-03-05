@@ -615,7 +615,7 @@ export const useGetRepoConfigFileQuery = (repo_uuid: string, snapshot_uuid: stri
   const errorNotifier = useErrorNotification();
   return useMutation<string>(
     [REPO_CONFIG_FILE_KEY, repo_uuid, snapshot_uuid],
-    async () => await getRepoConfigFile(repo_uuid, snapshot_uuid),
+    async () => await getRepoConfigFile(snapshot_uuid),
     {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (err: any) => {

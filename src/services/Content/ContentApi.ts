@@ -287,7 +287,7 @@ export const getSnapshotsByDate = async (
   uuids: string[],
   date: string,
 ): Promise<SnapshotByDateResponse[]> => {
-  const { data } = await axios.post('/api/content-sources/v1/repositories/snapshots/for_date/', {
+  const { data } = await axios.post('/api/content-sources/v1/snapshots/for_date/', {
     repository_uuids: uuids,
     date,
   });
@@ -403,11 +403,10 @@ export const triggerSnapshot: (repositoryUUID: string) => Promise<void> = async 
 };
 
 export const getRepoConfigFile: (
-  repo_uuid: string,
   snapshot_uuid: string,
-) => Promise<string> = async (repo_uuid, snapshot_uuid) => {
+) => Promise<string> = async (snapshot_uuid) => {
   const { data } = await axios.get(
-    `/api/content-sources/v1/repositories/${repo_uuid}/snapshots/${snapshot_uuid}/config.repo`,
+    `/api/content-sources/v1/snapshots/${snapshot_uuid}/config.repo`,
   );
   return data;
 };
