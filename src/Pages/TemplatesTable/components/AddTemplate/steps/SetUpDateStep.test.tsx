@@ -31,7 +31,7 @@ jest.mock('dayjs', () =>
 
 it('expect Set up date step to render correctly', () => {
   (useGetSnapshotsByDates as jest.Mock).mockImplementation(() => ({
-    data: [defaultSnapshotsByDateResponse],
+    data: defaultSnapshotsByDateResponse,
     mutateAsync: () => undefined,
   }));
 

@@ -83,7 +83,10 @@ export default function SetUpDateStep() {
 
   const columnHeaders = ['Name', /* 'Label',*/ 'Advisories', 'Packages'];
 
-  const itemsAfterDate = useMemo(() => data?.filter(({ is_after }) => is_after) || [], [data]);
+  const itemsAfterDate = useMemo(() => data?.data?.filter(({ is_after }) => is_after) || [], [data?.data]);
+  console.log("AFTER")
+  console.log(itemsAfterDate)
+  console.log(data?.data)
   const hasIsAfter = itemsAfterDate.length > 0;
 
   const { isLoading, data: contentData = { data: [], meta: { count: 0, limit: 20, offset: 0 } } } =

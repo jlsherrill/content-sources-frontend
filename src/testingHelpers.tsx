@@ -6,6 +6,7 @@ import {
   PopularRepository,
   RepositoryParamsResponse,
   SnapshotByDateResponse,
+  SnapshotForDate,
   SnapshotItem,
   ValidationResponse,
 } from './services/Content/ContentApi';
@@ -254,7 +255,7 @@ export const defaultTemplateItem: TemplateItem = {
   ],
 };
 
-export const defaultSnapshotsByDateResponse: SnapshotByDateResponse = {
+export const defaultSnapshotForDateItem: SnapshotForDate =   {
   repository_uuid: defaultContentItem.uuid,
   is_after: true,
   match: {
@@ -285,4 +286,10 @@ export const defaultSnapshotsByDateResponse: SnapshotByDateResponse = {
     removed_counts: {},
     url: '',
   },
+}
+
+export const defaultSnapshotsByDateResponse: SnapshotByDateResponse = {
+  data: [
+    defaultSnapshotForDateItem
+  ]
 };

@@ -182,7 +182,12 @@ export interface SnapshotItem {
   removed_counts: ContentCounts;
 }
 
+
 export type SnapshotByDateResponse = {
+  data: SnapshotForDate[];
+};
+
+export type SnapshotForDate = {
   repository_uuid: string;
   is_after: boolean;
   match?: {
@@ -286,7 +291,7 @@ export const deleteContentListItems: (uuids: string[]) => Promise<void> = async 
 export const getSnapshotsByDate = async (
   uuids: string[],
   date: string,
-): Promise<SnapshotByDateResponse[]> => {
+): Promise<SnapshotByDateResponse> => {
   const { data } = await axios.post('/api/content-sources/v1/snapshots/for_date/', {
     repository_uuids: uuids,
     date,
