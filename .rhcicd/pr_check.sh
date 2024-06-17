@@ -31,6 +31,8 @@ export IQE_CJI_TIMEOUT="30m"
 export DEPLOY_TIMEOUT="900"  # 15min
 export DEPLOY_FRONTENDS="true"
 
+export COMPONENTS_W_RESOURCES="pulp"
+
 set -exv
 
 # source is preferred to | bash -s in this case to avoid a subshell
