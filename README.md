@@ -8,10 +8,22 @@ To setup the hosts file run following command:
 npm run patch:hosts
 ```
 
-If this command throws an error run it as a `sudo`:
+If this command throws an error, you may need to install NPM system wide with `sudo yum install npm` and run it as a `sudo`:
 
 ```bash
 sudo npm run patch:hosts
+```
+
+Alternativly, simply add these lines to your /etc/hosts:
+```
+127.0.0.1 prod.foo.redhat.com
+::1 prod.foo.redhat.com
+127.0.0.1 stage.foo.redhat.com
+::1 stage.foo.redhat.com
+127.0.0.1 qa.foo.redhat.com
+::1 qa.foo.redhat.com
+127.0.0.1 ci.foo.redhat.com
+::1 ci.foo.redhat.com
 ```
 
 ## Getting started
