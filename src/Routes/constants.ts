@@ -2,6 +2,7 @@ export const REPOSITORIES_ROUTE = 'repositories';
 export const POPULAR_REPOSITORIES_ROUTE = 'popular';
 export const ADMIN_TASKS_ROUTE = 'admin-tasks';
 export const TEMPLATES_ROUTE = 'templates';
+export const TEMPLATES_DELETE_ROUTE = 'templates_delete';
 export const CONTENT_ROUTE = 'content';
 export const SNAPSHOTS_ROUTE = 'snapshots';
 export const SYSTEMS_ROUTE = 'systems';

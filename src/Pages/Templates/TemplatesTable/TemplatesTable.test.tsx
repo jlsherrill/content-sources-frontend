@@ -27,12 +27,7 @@ jest.mock('middleware/AppContext', () => ({
   }),
 }));
 
-jest.mock('Hooks/useArchVersion', () => () => ({
-  isError: false,
-  isLoading: false,
-  archesDisplay: () => 'x86_64',
-  versionDisplay: () => 'Rhel9',
-}));
+
 
 it('expect TemplatesTable to render empty state', () => {
   (useTemplateList as jest.Mock).mockImplementation(() => ({

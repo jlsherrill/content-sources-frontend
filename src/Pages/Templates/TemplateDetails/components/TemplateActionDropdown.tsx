@@ -7,9 +7,7 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useQueryClient } from 'react-query';
-import { useDeleteTemplateItemMutate } from 'services/Templates/TemplateQueries';
-import { TEMPLATES_ROUTE } from 'Routes/constants';
+import { DELETE_ROUTE, TEMPLATES_ROUTE } from 'Routes/constants';
 import ConditionalTooltip from 'components/ConditionalTooltip/ConditionalTooltip';
 import { useAppContext } from 'middleware/AppContext';
 
@@ -18,13 +16,9 @@ export default function TemplateActionDropdown() {
   const { pathname } = useLocation();
   const [mainRoute] = pathname?.split(`${TEMPLATES_ROUTE}/`) || [];
   const baseRoute = mainRoute + `${TEMPLATES_ROUTE}`;
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();  
   const { templateUUID: uuid } = useParams();
   const { rbac } = useAppContext();
-
-  const { mutateAsync: deleteItem, isLoading: isDeleting } =
-    useDeleteTemplateItemMutate(queryClient);
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
@@ -37,10 +31,7 @@ export default function TemplateActionDropdown() {
         setIsOpen(false);
         break;
       case 'delete':
-        deleteItem(uuid as string).then(() => {
-          setIsOpen(false);
-          navigate(baseRoute);
-        });
+        navigate(`${baseRoute}/${uuid}/${DELETE_ROUTE}`)      
         break;
 
       default:
@@ -61,7 +52,6 @@ export default function TemplateActionDropdown() {
           setDisabled
         >
           <MenuToggle
-            isDisabled={isDeleting}
             ref={toggleRef}
             onClick={onToggleClick}
             isExpanded={isOpen}
@@ -74,7 +64,7 @@ export default function TemplateActionDropdown() {
     >
       <DropdownList>
         <DropdownItem value='edit'>Edit</DropdownItem>
-        <DropdownItem isLoading={isDeleting} isDisabled={isDeleting} value='delete'>
+        <DropdownItem value='delete'>
           Delete
         </DropdownItem>
       </DropdownList>

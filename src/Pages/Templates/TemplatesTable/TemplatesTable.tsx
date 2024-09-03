@@ -28,16 +28,15 @@ import Hide from 'components/Hide/Hide';
 import EmptyTableState from 'components/EmptyTableState/EmptyTableState';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { TemplateFilterData, TemplateItem } from 'services/Templates/TemplateApi';
-import { useDeleteTemplateItemMutate, useTemplateList } from 'services/Templates/TemplateQueries';
 import ConditionalTooltip from 'components/ConditionalTooltip/ConditionalTooltip';
 import { useAppContext } from 'middleware/AppContext';
 import TemplateFilters from './components/TemplateFilters';
 import { formatDateDDMMMYYYY, formatDateUTC } from 'helpers';
-import { useQueryClient } from 'react-query';
 import Header from 'components/Header/Header';
 import useRootPath from 'Hooks/useRootPath';
-import { DETAILS_ROUTE, TEMPLATES_ROUTE } from 'Routes/constants';
+import { DELETE_ROUTE, DETAILS_ROUTE, TEMPLATES_ROUTE } from 'Routes/constants';
 import useArchVersion from 'Hooks/useArchVersion';
+import { useTemplateList } from 'services/Templates/TemplateQueries';
 
 const useStyles = createUseStyles({
   mainContainer: {
@@ -76,8 +75,7 @@ const TemplatesTable = () => {
   const classes = useStyles();
   const rootPath = useRootPath();
   const navigate = useNavigate();
-  const { rbac } = useAppContext();
-  const queryClient = useQueryClient();
+  const { rbac } = useAppContext();  
   const storedPerPage = Number(localStorage.getItem(perPageKey)) || 20;
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(storedPerPage);
@@ -112,9 +110,6 @@ const TemplatesTable = () => {
     isFetching,
     data = { data: [], meta: { count: 0, limit: 20, offset: 0 } },
   } = useTemplateList(page, perPage, sortString, filterData);
-
-  const { mutateAsync: deleteItem, isLoading: isDeleting } =
-    useDeleteTemplateItemMutate(queryClient);
 
   const onSetPage = (_, newPage: number) => setPage(newPage);
 
@@ -154,7 +149,7 @@ const TemplatesTable = () => {
     versionDisplay,
   } = useArchVersion();
 
-  const actionTakingPlace = isLoading || isFetching || repositoryParamsLoading || isDeleting;
+  const actionTakingPlace = isLoading || isFetching || repositoryParamsLoading;
 
   // Error is caught in the wrapper component
   if (isError) throw error;
@@ -311,17 +306,7 @@ const TemplatesTable = () => {
                               { isSeparator: true },
                               {
                                 title: 'Delete',
-                                onClick: () =>
-                                  deleteItem(uuid).then(() => {
-                                    // If last item being deleted on a page, go back one page.
-                                    if (
-                                      page > 1 &&
-                                      count / perPage + 1 >= page &&
-                                      (count - 1) % perPage === 0
-                                    ) {
-                                      setPage(page - 1);
-                                    }
-                                  }),
+                                onClick: () => navigate(`${uuid}/${DELETE_ROUTE}`),
                               },
                             ]}
                           />

@@ -38,6 +38,7 @@ import PackageModal from 'Pages/Repositories/ContentListTable/components/Package
 import PopularRepositoriesTable from 'Pages/Repositories/PopularRepositoriesTable/PopularRepositoriesTable';
 import AdminTaskTable from 'Pages/Repositories/AdminTaskTable/AdminTaskTable';
 import ViewPayloadModal from 'Pages/Repositories/AdminTaskTable/components/ViewPayloadModal/ViewPayloadModal';
+import DeleteTemplateModal from 'Pages/Templates/TemplatesTable/components/DeleteTemplateModal';
 
 export default function RepositoriesRoutes() {
   const key = useMemo(() => Math.random(), []);
@@ -120,6 +121,7 @@ export default function RepositoriesRoutes() {
             <>
               <Route key='1' path={ADD_ROUTE} element={<AddTemplate />} />
               <Route key='2' path={`:templateUUID/${EDIT_ROUTE}`} element={<AddTemplate />} />
+              <Route key='3' path={`:templateUUID/${DELETE_ROUTE}`} element={<DeleteTemplateModal />} />
             </>
           ) : (
             ''
