@@ -1,9 +1,5 @@
 import { render } from '@testing-library/react';
-import {
-  ReactQueryTestWrapper,
-  defaultSystemsListItem,
-  defaultTemplateItem,
-} from 'testingHelpers';
+import { ReactQueryTestWrapper, defaultSystemsListItem, defaultTemplateItem } from 'testingHelpers';
 
 import DeleteTemplateModal from './DeleteTemplateModal';
 import { useListSystemsByTemplateId } from 'services/Systems/SystemsQueries';
@@ -23,13 +19,13 @@ jest.mock('react-router-dom', () => ({
 jest.mock('Hooks/useRootPath', () => () => 'someUrl');
 
 jest.mock('services/Systems/SystemsQueries', () => ({
-    useListSystemsByTemplateId: jest.fn(),
+  useListSystemsByTemplateId: jest.fn(),
 }));
 
 jest.mock('services/Templates/TemplateQueries', () => ({
-    useDeleteTemplateItemMutate: () => ({ mutate: () => undefined, isLoading: false }),
-  }));
-  
+  useDeleteTemplateItemMutate: () => ({ mutate: () => undefined, isLoading: false }),
+}));
+
 jest.mock('middleware/AppContext', () => ({ useAppContext: () => ({}) }));
 
 it('Render delete modal where there are no systems', () => {
@@ -47,8 +43,8 @@ it('Render delete modal where there are no systems', () => {
     </ReactQueryTestWrapper>,
   );
 
-  expect(queryByText('This template is in use.')).toBeNull()
-  expect(queryByText('Are you sure you want to remove this template?')).toBeInTheDocument(); 
+  expect(queryByText('This template is in use.')).toBeNull();
+  expect(queryByText('Are you sure you want to remove this template?')).toBeInTheDocument();
 });
 
 it('Render delete modal where template has one system', () => {
@@ -65,7 +61,7 @@ it('Render delete modal where template has one system', () => {
       <DeleteTemplateModal />
     </ReactQueryTestWrapper>,
   );
-  
-  expect(queryByText('This template is in use.')).toBeInTheDocument();  
-  expect(queryByText('Are you sure you want to remove this template?')).toBeInTheDocument(); 
+
+  expect(queryByText('This template is in use.')).toBeInTheDocument();
+  expect(queryByText('Are you sure you want to remove this template?')).toBeInTheDocument();
 });

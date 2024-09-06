@@ -27,8 +27,6 @@ jest.mock('middleware/AppContext', () => ({
   }),
 }));
 
-
-
 it('expect TemplatesTable to render empty state', () => {
   (useTemplateList as jest.Mock).mockImplementation(() => ({
     isLoading: false,

@@ -16,7 +16,7 @@ export default function TemplateActionDropdown() {
   const { pathname } = useLocation();
   const [mainRoute] = pathname?.split(`${TEMPLATES_ROUTE}/`) || [];
   const baseRoute = mainRoute + `${TEMPLATES_ROUTE}`;
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const { templateUUID: uuid } = useParams();
   const { rbac } = useAppContext();
 
@@ -31,7 +31,7 @@ export default function TemplateActionDropdown() {
         setIsOpen(false);
         break;
       case 'delete':
-        navigate(`${baseRoute}/${uuid}/${DELETE_ROUTE}`)      
+        navigate(`${baseRoute}/${uuid}/${DELETE_ROUTE}`);
         break;
 
       default:
@@ -51,11 +51,7 @@ export default function TemplateActionDropdown() {
           show={!rbac?.templateWrite}
           setDisabled
         >
-          <MenuToggle
-            ref={toggleRef}
-            onClick={onToggleClick}
-            isExpanded={isOpen}
-          >
+          <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
             Actions
           </MenuToggle>
         </ConditionalTooltip>
@@ -64,9 +60,7 @@ export default function TemplateActionDropdown() {
     >
       <DropdownList>
         <DropdownItem value='edit'>Edit</DropdownItem>
-        <DropdownItem value='delete'>
-          Delete
-        </DropdownItem>
+        <DropdownItem value='delete'>Delete</DropdownItem>
       </DropdownList>
     </Dropdown>
   );

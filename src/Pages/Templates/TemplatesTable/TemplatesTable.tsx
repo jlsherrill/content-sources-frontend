@@ -75,7 +75,7 @@ const TemplatesTable = () => {
   const classes = useStyles();
   const rootPath = useRootPath();
   const navigate = useNavigate();
-  const { rbac } = useAppContext();  
+  const { rbac } = useAppContext();
   const storedPerPage = Number(localStorage.getItem(perPageKey)) || 20;
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(storedPerPage);
