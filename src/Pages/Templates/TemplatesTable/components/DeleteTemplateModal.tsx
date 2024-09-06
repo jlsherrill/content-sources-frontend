@@ -103,8 +103,8 @@ export default function DeleteTemplateModal() {
               href={`${rootPath}/${TEMPLATES_ROUTE}/${uuid}/${DETAILS_ROUTE}/${SYSTEMS_ROUTE}`}
               className={classes.link}
             >
-              {systems.data.length} {systems.data.length === 1 ? 'system is' : 'systems are'}{' '}
-              assigned to this template.
+              This template is assigned to {systems.data.length}{' '}
+              {systems.data.length === 1 ? 'system' : 'systems'}.
             </a>
             <span>
               Removing this template will cause all associated systems to stop recieving custom
