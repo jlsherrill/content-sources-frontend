@@ -1,4 +1,6 @@
 import {
+  Alert,
+  Button,
   ClipboardCopy,
   ClipboardCopyVariant,
   Content,
@@ -10,6 +12,7 @@ import {
   Tabs,
   TabTitleText,
 } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { createRef, ReactElement, useMemo, useState } from 'react';
 
 import { ContentItem } from 'services/Content/ContentApi';
@@ -68,6 +71,20 @@ const ConnectRepositoryPopover = ({ repository, children }: ConnectRepositoryPop
 
   const bodyContent = (
     <div>
+      <Alert variant='info' isInline isPlain title='Authentication required' className={spacing.mbMd}>
+        <Button
+          variant='link'
+          isInline
+          component='a'
+          href='https://access.redhat.com/terms-based-registry/'
+          target='_blank'
+          icon={<ExternalLinkAltIcon />}
+          iconPosition='end'
+        >
+          Create a service account
+        </Button>{' '}
+        to generate credentials.
+      </Alert>
       <Tabs
         activeKey={activeTabKey}
         onSelect={(_, eventKey) => setActiveTabKey(eventKey as string)}
