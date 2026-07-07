@@ -1,4 +1,5 @@
 import { ContentItem } from 'services/Content/ContentApi';
+import { formatDistributionUrl } from '../../helpers';
 
 export interface ConnectCodeSnippet {
   label: string;
@@ -27,7 +28,7 @@ const getMavenRepoName = (repository: RepositoryContext): string => {
 };
 
 const getMavenSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[] => {
-  const { published_distribution_url } = repository;
+  const distributionUrl = formatDistributionUrl(repository.published_distribution_url);
   const repoId = getMavenRepoId(repository);
   const repoName = getMavenRepoName(repository);
 
@@ -48,7 +49,7 @@ const getMavenSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[]
         <repository>
           <id>${repoId}</id>
           <name>${repoName}</name>
-          <url>${published_distribution_url}</url>
+          <url>${distributionUrl}</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -91,7 +92,7 @@ const getMavenSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[]
             username "$mavenUser"
             password "$mavenPassword"
         }
-        url "${published_distribution_url}"
+        url "${distributionUrl}"
     }
     mavenCentral()
 }`,
@@ -113,7 +114,7 @@ mavenPassword=<service_account_token>`,
       snippets: [
         {
           label: 'Configure as a remote Maven repository:',
-          code: published_distribution_url || '',
+          code: distributionUrl || '',
           urlOnly: true,
           description:
             'Set as the remote URL in Artifactory. Configure basic authentication with your service account credentials.',
@@ -128,7 +129,7 @@ mavenPassword=<service_account_token>`,
       snippets: [
         {
           label: 'Configure as a Maven proxy repository:',
-          code: published_distribution_url || '',
+          code: distributionUrl || '',
           urlOnly: true,
           description:
             'Set as the remote URL in Nexus. Authentication uses mTLS client certificates.',
@@ -139,7 +140,7 @@ mavenPassword=<service_account_token>`,
 };
 
 const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[] => {
-  const { published_distribution_url } = repository;
+  const distributionUrl = formatDistributionUrl(repository.published_distribution_url || '');
 
   return [
     {
@@ -155,7 +156,7 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
         },
         {
           label: 'Set as default index:',
-          code: `pip config set global.index-url ${published_distribution_url}`,
+          code: `pip config set global.index-url ${distributionUrl}`,
         },
       ],
     },
@@ -172,7 +173,7 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
         },
         {
           label: 'Install from the repository:',
-          code: `pipenv install --index ${published_distribution_url}`,
+          code: `pipenv install --index ${distributionUrl}`,
         },
       ],
     },
@@ -189,7 +190,7 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
         },
         {
           label: 'Add as default source:',
-          code: `poetry source add --priority=default lightwell ${published_distribution_url}`,
+          code: `poetry source add --priority=default lightwell ${distributionUrl}`,
         },
       ],
     },
@@ -201,7 +202,7 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
       snippets: [
         {
           label: 'Configure as a remote PyPI repository:',
-          code: published_distribution_url || '',
+          code: distributionUrl || '',
           urlOnly: true,
           description:
             'Set as the remote URL in Artifactory. Configure basic authentication with your service account credentials.',
@@ -216,7 +217,7 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
       snippets: [
         {
           label: 'Configure as a PyPI proxy repository:',
-          code: published_distribution_url || '',
+          code: distributionUrl || '',
           urlOnly: true,
           description:
             'Set as the remote URL in Nexus. Authentication uses mTLS client certificates.',

@@ -40,6 +40,7 @@ import {
 import { LIGHTWELL_USE_MOCK } from '../constants';
 import {
   compareVersionsDesc,
+  formatDistributionUrl,
   formatRepositoryName,
   lightwellReleaseNum,
   sortVersionsDesc,
@@ -500,7 +501,7 @@ const PackageDetails = () => {
                       latestRelease={displayVersion}
                       hasRelease={hasRelease}
                       summary={isMaven ? mavenDetail?.summary : pythonDetail?.summary}
-                      sourceUrl={repository.published_distribution_url ?? ''}
+                      sourceUrl={formatDistributionUrl(repository.published_distribution_url ?? '')}
                     />
                   </TabContentBody>
                 </TabContent>

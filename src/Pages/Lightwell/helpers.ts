@@ -135,3 +135,13 @@ export const compareReleasesDesc = (
 
   return lightwellReleaseNum(b.release) - lightwellReleaseNum(a.release);
 };
+
+/**
+ * Transforms published distribution URL by replacing /api/pulp-content/lightwell with /lightwell
+ *
+ * Example:
+ * https://packages.redhat.com/api/pulp-content/lightwell/java/validated
+ * -> https://packages.redhat.com/lightwell/java/validated
+ */
+export const formatDistributionUrl = (url: string): string =>
+  url.replace('/api/pulp-content/lightwell', '/lightwell');

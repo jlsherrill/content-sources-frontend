@@ -1,6 +1,7 @@
 import {
   compareReleasesDesc,
   compareVersionsDesc,
+  formatDistributionUrl,
   formatEcosystemDisplay,
   formatRepositoryName,
   getEcosystemFromContentType,
@@ -181,5 +182,41 @@ describe('compareReleasesDesc', () => {
       release('1.2.2.rhlw-00008', 'rhlw-00008'),
       release('1.2.2.rhlw-00003', 'rhlw-00003'),
     ]);
+  });
+});
+
+describe('formatDistributionUrl', () => {
+  it('transforms Pulp API URL to Lightwell URL for production', () => {
+    expect(
+      formatDistributionUrl(
+        'https://packages.redhat.com/api/pulp-content/lightwell/java/validated',
+      ),
+    ).toBe('https://packages.redhat.com/lightwell/java/validated');
+  });
+
+  it('transforms Pulp API URL to Lightwell URL for stage', () => {
+    expect(
+      formatDistributionUrl(
+        'https://packages.stage.redhat.com/api/pulp-content/lightwell/python/remediated/',
+      ),
+    ).toBe('https://packages.stage.redhat.com/lightwell/python/remediated/');
+  });
+
+  it('handles URLs without trailing slash', () => {
+    expect(
+      formatDistributionUrl(
+        'https://packages.redhat.com/api/pulp-content/lightwell/python/validated',
+      ),
+    ).toBe('https://packages.redhat.com/lightwell/python/validated');
+  });
+
+  it('returns empty string unchanged', () => {
+    expect(formatDistributionUrl('')).toBe('');
+  });
+
+  it('returns URL unchanged if it does not contain the expected path', () => {
+    expect(formatDistributionUrl('https://example.com/some/other/path')).toBe(
+      'https://example.com/some/other/path',
+    );
   });
 });

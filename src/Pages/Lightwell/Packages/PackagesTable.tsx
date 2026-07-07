@@ -41,6 +41,7 @@ import useDebounce from 'Hooks/useDebounce';
 import { getMockLightwellPackages } from '../mockPackages';
 import {
   compareReleasesDesc,
+  formatDistributionUrl,
   formatRepositoryName,
   getRepositoryDescription,
   sortVersionsDesc,
@@ -345,8 +346,10 @@ const PackagesTable = () => {
                   </Title>
                 </FlexItem>
                 <FlexItem>
-                  <CopyLabel copyText={repository.published_distribution_url || ''}>
-                    {repository.published_distribution_url || ''}
+                  <CopyLabel
+                    copyText={formatDistributionUrl(repository.published_distribution_url || '')}
+                  >
+                    {formatDistributionUrl(repository.published_distribution_url || '')}
                   </CopyLabel>
                 </FlexItem>
               </Flex>
@@ -355,7 +358,9 @@ const PackagesTable = () => {
                   repository={{
                     uuid: repository.uuid,
                     name: repository.name,
-                    published_distribution_url: repository.published_distribution_url,
+                    published_distribution_url: formatDistributionUrl(
+                      repository.published_distribution_url || '',
+                    ),
                     content_type: repository.content_type,
                   }}
                 >
