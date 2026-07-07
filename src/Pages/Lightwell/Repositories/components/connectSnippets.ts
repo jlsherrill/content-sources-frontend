@@ -11,6 +11,7 @@ export interface ConnectSnippetTab {
   eventKey: string;
   title: string;
   snippets: ConnectCodeSnippet[];
+  docsUrl?: string;
 }
 
 type RepositoryContext = Pick<ContentItem, 'name' | 'published_distribution_url' | 'content_type'>;
@@ -34,6 +35,7 @@ const getMavenSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[]
     {
       eventKey: 'maven',
       title: 'Maven',
+      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_java_build_tool',
       snippets: [
         {
           label: 'Add to your settings.xml:',
@@ -77,6 +79,7 @@ const getMavenSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[]
     {
       eventKey: 'gradle',
       title: 'Gradle',
+      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_java_build_tool',
       snippets: [
         {
           label: 'Add to your build.gradle:',
@@ -103,6 +106,7 @@ mavenPassword=<service_account_token>`,
     {
       eventKey: 'artifactory',
       title: 'Artifactory',
+      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_artifactory_to_use_rhln_repository',
       snippets: [
         {
           label: 'Configure as a remote Maven repository:',
@@ -116,6 +120,7 @@ mavenPassword=<service_account_token>`,
     {
       eventKey: 'nexus',
       title: 'Nexus',
+      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_nexus_to_use_rhln_repository',
       snippets: [
         {
           label: 'Configure as a Maven proxy repository:',
@@ -136,33 +141,76 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
     {
       eventKey: 'pip',
       title: 'pip',
+      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_python_build_tool',
       snippets: [
         {
-          label: 'Install directly:',
-          code: `pip install --index-url ${published_distribution_url} <package>`,
+          label: 'Add credentials to ~/.netrc:',
+          code: `machine packages.redhat.com login <service_account_username> password <service_account_token>`,
+          description: 'Username format: XXXXXXX|service-account-name',
+        },
+        {
+          label: 'Set as default index:',
+          code: `pip config set global.index-url ${published_distribution_url}`,
         },
       ],
     },
     {
-      eventKey: 'pip.conf',
-      title: 'pip.conf',
+      eventKey: 'pipenv',
+      title: 'Pipenv',
+      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_python_build_tool',
       snippets: [
         {
-          label: 'Add to your pip.conf for permanent use:',
-          code: `[global] index-url = ${published_distribution_url}`,
+          label: 'Add credentials to ~/.netrc:',
+          code: `machine packages.redhat.com login <service_account_username> password <service_account_token>`,
+          description: 'Username format: XXXXXXX|service-account-name',
+        },
+        {
+          label: 'Install from the repository:',
+          code: `pipenv install --index ${published_distribution_url}`,
+        },
+      ],
+    },
+    {
+      eventKey: 'poetry',
+      title: 'Poetry',
+      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_python_build_tool',
+      snippets: [
+        {
+          label: 'Configure authentication:',
+          code: `poetry config http-basic.lightwell "<service_account_username>" "<service_account_token>"`,
+          description: 'Username format: XXXXXXX|service-account-name',
+        },
+        {
+          label: 'Add as default source:',
+          code: `poetry source add --priority=default lightwell ${published_distribution_url}`,
         },
       ],
     },
     {
       eventKey: 'artifactory',
       title: 'Artifactory',
+      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_artifactory_to_use_rhln_repository',
       snippets: [
         {
-          label: 'Configure as a remote repository in Artifactory:',
-          code: published_distribution_url ? published_distribution_url : '',
+          label: 'Configure as a remote PyPI repository:',
+          code: published_distribution_url || '',
           urlOnly: true,
           description:
-            'Set the remote URL to this endpoint. Artifactory will proxy and cache packages automatically.',
+            'Set as the remote URL in Artifactory. Configure basic authentication with your service account credentials.',
+        },
+      ],
+    },
+    {
+      eventKey: 'nexus',
+      title: 'Nexus',
+      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_nexus_to_use_rhln_repository',
+      snippets: [
+        {
+          label: 'Configure as a PyPI proxy repository:',
+          code: published_distribution_url || '',
+          urlOnly: true,
+          description:
+            'Set as the remote URL in Nexus. Authentication uses mTLS client certificates.',
         },
       ],
     },

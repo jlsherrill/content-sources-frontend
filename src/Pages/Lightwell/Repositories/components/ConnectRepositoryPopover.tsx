@@ -1,5 +1,4 @@
 import {
-  Alert,
   Button,
   ClipboardCopy,
   ClipboardCopyVariant,
@@ -46,7 +45,7 @@ const ConnectRepositoryPopover = ({ repository, children }: ConnectRepositoryPop
     <Flex direction={{ default: 'column' }} gap={{ default: 'gapMd' }}>
       {tab.snippets.map((snippet) => (
         <FlexItem key={snippet.label}>
-          <Content component='small' style={{ textAlign: 'left' }}>
+          <Content component='p' style={{ textAlign: 'left' }}>
             {snippet.label}
           </Content>
           <ClipboardCopy
@@ -66,12 +65,30 @@ const ConnectRepositoryPopover = ({ repository, children }: ConnectRepositoryPop
           )}
         </FlexItem>
       ))}
+      {tab.docsUrl && (
+        <FlexItem>
+          <Button
+            variant='link'
+            isInline
+            component='a'
+            href={tab.docsUrl}
+            target='_blank'
+            icon={<ExternalLinkAltIcon />}
+            iconPosition='end'
+          >
+            Full documentation for {tab.title}
+          </Button>
+        </FlexItem>
+      )}
     </Flex>
   );
 
   const bodyContent = (
-    <div>
-      <Alert variant='info' isInline isPlain title='Authentication required' className={spacing.mbMd}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div>
+        <Content component='h4' className={spacing.mbSm}>Authenticate build tools</Content>
+        <Content component='p'>
+        {'First, '}
         <Button
           variant='link'
           isInline
@@ -80,12 +97,28 @@ const ConnectRepositoryPopover = ({ repository, children }: ConnectRepositoryPop
           target='_blank'
           icon={<ExternalLinkAltIcon />}
           iconPosition='end'
+          style={{ fontWeight: 'bold' }}
         >
-          Create a service account
-        </Button>{' '}
-        to generate credentials.
-      </Alert>
-      <Tabs
+          create a service account
+        </Button>
+        {' for Lightwell. Use the username and token in the snippets below. For further help, see '}
+        <Button
+          variant='link'
+          isInline
+          component='a'
+          href='https://docs.redhat.com/en/documentation/red_hat_lightwell_network/'
+          target='_blank'
+          icon={<ExternalLinkAltIcon />}
+          iconPosition='end'
+        >
+          Documentation
+        </Button>
+        .
+      </Content>
+      </div>
+      <div>
+        <Content component='h4' className={spacing.mbSm}>Connect to your build tool</Content>
+        <Tabs
         activeKey={activeTabKey}
         onSelect={(_, eventKey) => setActiveTabKey(eventKey as string)}
         aria-label='Connect repository snippets'
@@ -114,6 +147,7 @@ const ConnectRepositoryPopover = ({ repository, children }: ConnectRepositoryPop
           {renderTabPanel(tab)}
         </TabContent>
       ))}
+      </div>
     </div>
   );
 
