@@ -56,6 +56,11 @@ import ConnectRepositoryPopover from '../Repositories/components/ConnectReposito
 import { buildVersionFromRelease } from './components/PackageReleasesTab';
 import useLightwellRepository from '../useLightwellRepository';
 
+const normalizePublishedUrl = (url: string | undefined): string => {
+  if (!url) return '';
+  return url.replace('/api/pulp-content/lightwell', '/lightwell');
+};
+
 const useStyles = createUseStyles({
   topContainer: {
     padding: '16px 24px',
@@ -354,7 +359,7 @@ const PackagesTable = () => {
                     clickTip='Copied'
                     variant={ClipboardCopyVariant.inlineCompact}
                   >
-                    {repository.published_distribution_url || ''}
+                    {normalizePublishedUrl(repository.published_distribution_url)}
                   </ClipboardCopy>
                 </FlexItem>
               </Flex>
