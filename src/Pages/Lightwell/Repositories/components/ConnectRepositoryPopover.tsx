@@ -86,67 +86,73 @@ const ConnectRepositoryPopover = ({ repository, children }: ConnectRepositoryPop
   const bodyContent = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div>
-        <Content component='h4' className={spacing.mbSm}>Authenticate build tools</Content>
+        <Content component='h4' className={spacing.mbSm}>
+          Authenticate build tools
+        </Content>
         <Content component='p'>
-        {'First, '}
-        <Button
-          variant='link'
-          isInline
-          component='a'
-          href='https://access.redhat.com/terms-based-registry/'
-          target='_blank'
-          icon={<ExternalLinkAltIcon />}
-          iconPosition='end'
-          style={{ fontWeight: 'bold' }}
-        >
-          create a service account
-        </Button>
-        {' for Lightwell. Use the username and token in the snippets below. For further help, see '}
-        <Button
-          variant='link'
-          isInline
-          component='a'
-          href='https://docs.redhat.com/en/documentation/red_hat_lightwell_network/'
-          target='_blank'
-          icon={<ExternalLinkAltIcon />}
-          iconPosition='end'
-        >
-          Documentation
-        </Button>
-        .
-      </Content>
+          {'First, '}
+          <Button
+            variant='link'
+            isInline
+            component='a'
+            href='https://access.redhat.com/terms-based-registry/'
+            target='_blank'
+            icon={<ExternalLinkAltIcon />}
+            iconPosition='end'
+            style={{ fontWeight: 'bold' }}
+          >
+            create a service account
+          </Button>
+          {
+            ' for Lightwell. Use the username and token in the snippets below. For further help, see '
+          }
+          <Button
+            variant='link'
+            isInline
+            component='a'
+            href='https://docs.redhat.com/en/documentation/red_hat_lightwell_network/'
+            target='_blank'
+            icon={<ExternalLinkAltIcon />}
+            iconPosition='end'
+          >
+            Documentation
+          </Button>
+          .
+        </Content>
       </div>
       <div>
-        <Content component='h4' className={spacing.mbSm}>Connect to your build tool</Content>
+        <Content component='h4' className={spacing.mbSm}>
+          Connect to your build tool
+        </Content>
         <Tabs
-        activeKey={activeTabKey}
-        onSelect={(_, eventKey) => setActiveTabKey(eventKey as string)}
-        aria-label='Connect repository snippets'
-        ouiaId='lightwell-connect-snippets-tabs'
-      >
-        {tabs.map((tab) => (
-          <Tab
+          activeKey={activeTabKey}
+          onSelect={(_, eventKey) => setActiveTabKey(eventKey as string)}
+          aria-label='Connect repository snippets'
+          ouiaId='lightwell-connect-snippets-tabs'
+        >
+          {tabs.map((tab) => (
+            <Tab
+              key={tab.eventKey}
+              eventKey={tab.eventKey}
+              title={<TabTitleText>{tab.title}</TabTitleText>}
+              tabContentRef={tabRefs[tab.eventKey]}
+              ouiaId={`lightwell-connect-tab-${tab.eventKey}`}
+            />
+          ))}
+        </Tabs>
+        {tabs.map((tab, index) => (
+          <TabContent
             key={tab.eventKey}
             eventKey={tab.eventKey}
-            title={<TabTitleText>{tab.title}</TabTitleText>}
-            tabContentRef={tabRefs[tab.eventKey]}
-            ouiaId={`lightwell-connect-tab-${tab.eventKey}`}
-          />
+            id={`lightwell-connect-panel-${tab.eventKey}`}
+            aria-label={tab.title}
+            ref={tabRefs[tab.eventKey]}
+            hidden={index > 0}
+            className={spacing.ptMd}
+          >
+            {renderTabPanel(tab)}
+          </TabContent>
         ))}
-      </Tabs>
-      {tabs.map((tab, index) => (
-        <TabContent
-          key={tab.eventKey}
-          eventKey={tab.eventKey}
-          id={`lightwell-connect-panel-${tab.eventKey}`}
-          aria-label={tab.title}
-          ref={tabRefs[tab.eventKey]}
-          hidden={index > 0}
-          className={spacing.ptMd}
-        >
-          {renderTabPanel(tab)}
-        </TabContent>
-      ))}
       </div>
     </div>
   );

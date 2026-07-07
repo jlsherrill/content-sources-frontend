@@ -35,7 +35,8 @@ const getMavenSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[]
     {
       eventKey: 'maven',
       title: 'Maven',
-      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_java_build_tool',
+      docsUrl:
+        'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_java_build_tool',
       snippets: [
         {
           label: 'Add to your settings.xml:',
@@ -79,7 +80,8 @@ const getMavenSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[]
     {
       eventKey: 'gradle',
       title: 'Gradle',
-      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_java_build_tool',
+      docsUrl:
+        'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_java_build_tool',
       snippets: [
         {
           label: 'Add to your build.gradle:',
@@ -106,7 +108,8 @@ mavenPassword=<service_account_token>`,
     {
       eventKey: 'artifactory',
       title: 'Artifactory',
-      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_artifactory_to_use_rhln_repository',
+      docsUrl:
+        'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_artifactory_to_use_rhln_repository',
       snippets: [
         {
           label: 'Configure as a remote Maven repository:',
@@ -120,7 +123,8 @@ mavenPassword=<service_account_token>`,
     {
       eventKey: 'nexus',
       title: 'Nexus',
-      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_nexus_to_use_rhln_repository',
+      docsUrl:
+        'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_nexus_to_use_rhln_repository',
       snippets: [
         {
           label: 'Configure as a Maven proxy repository:',
@@ -141,7 +145,8 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
     {
       eventKey: 'pip',
       title: 'pip',
-      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_python_build_tool',
+      docsUrl:
+        'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_python_build_tool',
       snippets: [
         {
           label: 'Add credentials to ~/.netrc:',
@@ -157,7 +162,8 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
     {
       eventKey: 'pipenv',
       title: 'Pipenv',
-      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_python_build_tool',
+      docsUrl:
+        'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_python_build_tool',
       snippets: [
         {
           label: 'Add credentials to ~/.netrc:',
@@ -173,7 +179,8 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
     {
       eventKey: 'poetry',
       title: 'Poetry',
-      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_python_build_tool',
+      docsUrl:
+        'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_python_build_tool',
       snippets: [
         {
           label: 'Configure authentication:',
@@ -189,7 +196,8 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
     {
       eventKey: 'artifactory',
       title: 'Artifactory',
-      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_artifactory_to_use_rhln_repository',
+      docsUrl:
+        'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_artifactory_to_use_rhln_repository',
       snippets: [
         {
           label: 'Configure as a remote PyPI repository:',
@@ -203,7 +211,8 @@ const getPythonSnippetTabs = (repository: RepositoryContext): ConnectSnippetTab[
     {
       eventKey: 'nexus',
       title: 'Nexus',
-      docsUrl: 'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_nexus_to_use_rhln_repository',
+      docsUrl:
+        'https://docs.redhat.com/en/documentation/red_hat_lightwell_network/current/configure-configure_nexus_to_use_rhln_repository',
       snippets: [
         {
           label: 'Configure as a PyPI proxy repository:',
