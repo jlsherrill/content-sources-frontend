@@ -241,17 +241,20 @@ export interface RepositoryPackageReleaseInfo {
 }
 
 export interface RepositoryPackageItem {
-  group: string;
+  group?: string;
   name: string;
   versions: string[];
   latest_releases: RepositoryPackageReleaseInfo[];
+  ecosystem?: string;
+  repository?: string;
+  repository_uuid?: string;
+  last_updated?: string;
 }
 
-export type RepositoryPackagesResponse = {
-  results: RepositoryPackageItem[];
-  total: number;
-  limit: number;
-  offset: number;
+export type LightwellPackagesResponse = {
+  data: RepositoryPackageItem[];
+  meta: Meta;
+  links: Links;
 };
 
 export interface PackageDetailResponse {
@@ -578,14 +581,15 @@ export const getPackages: (
   return data;
 };
 
-export const getLightwellRepositoryPackages: (
-  uuid: string,
+export const getLightwellPackages: (
+  repository: string,
   page: number,
   limit: number,
   search?: string,
-) => Promise<RepositoryPackagesResponse> = async (uuid, page, limit, search = '') => {
+) => Promise<LightwellPackagesResponse> = async (repository, page, limit, search = '') => {
   const { data } = await axios.get(
-    `/api/content-sources/v1/repositories/${uuid}/packages?${objectToUrlParams({
+    `/api/lightwell/v0.1/packages?${objectToUrlParams({
+      repository,
       offset: ((page - 1) * limit).toString(),
       limit: limit.toString(),
       search,

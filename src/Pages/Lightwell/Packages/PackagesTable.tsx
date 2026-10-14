@@ -42,7 +42,7 @@ import {
   type BaseCellProps,
 } from '@patternfly/react-table';
 
-import { useLightwellRepositoryPackagesQuery } from 'services/Content/ContentQueries';
+import { useLightwellPackagesQuery } from 'services/Content/ContentQueries';
 import { RepositoryPackageItem } from 'services/Content/ContentApi';
 import { getMockLightwellPackages } from '../mockPackages';
 import {
@@ -146,7 +146,7 @@ const mapRepositoryPackage = (
         );
 
   return {
-    group_id: pkg.group,
+    group_id: pkg.group ?? '',
     name: pkg.name,
     versions: sortedVersions,
     latest_releases: latestReleasePerVersion.map((release) => ({
@@ -239,12 +239,13 @@ const PackagesTable = () => {
     error,
   } = useLightwellRepository(repoSlug);
 
-  const apiPackagesQuery = useLightwellRepositoryPackagesQuery(
-    repoUUID,
+  const repoFilterName = repository?.name ?? '';
+  const apiPackagesQuery = useLightwellPackagesQuery(
+    repoFilterName,
     page,
     perPage,
     debouncedSearch,
-    !!repoUUID && !useMock,
+    !!repoFilterName && !useMock,
   );
 
   const {
@@ -268,10 +269,10 @@ const PackagesTable = () => {
       };
     }
 
-    const results = packagesData?.results ?? [];
+    const results = packagesData?.data ?? [];
     return {
       packages: results.map((pkg) => mapRepositoryPackage(pkg, isPythonWithFixes)),
-      packageCount: packagesData?.total ?? 0,
+      packageCount: packagesData?.meta?.count ?? 0,
     };
   }, [useMock, repoUUID, debouncedSearch, page, perPage, packagesData, isPythonWithFixes]);
 

@@ -49,7 +49,7 @@ import {
   getLatestRepoConfigFile,
   PopularRepository,
   bulkRemoveRepositoryRpms,
-  getLightwellRepositoryPackages,
+  getLightwellPackages,
   getPythonPackageDetail,
   getPythonPackageVersions,
   getMavenPackageDetail,
@@ -71,7 +71,7 @@ export const POPULAR_REPOSITORIES_LIST_KEY = 'POPULAR_REPOSITORIES_LIST_KEY';
 export const REPOSITORY_PARAMS_KEY = 'REPOSITORY_PARAMS_KEY';
 export const CREATE_PARAMS_KEY = 'CREATE_PARAMS_KEY';
 export const PACKAGES_KEY = 'PACKAGES_KEY';
-export const LIGHTWELL_REPOSITORY_PACKAGES_KEY = 'LIGHTWELL_REPOSITORY_PACKAGES_KEY';
+export const LIGHTWELL_PACKAGES_KEY = 'LIGHTWELL_PACKAGES_KEY';
 export const MAVEN_PACKAGE_DETAIL_KEY = 'MAVEN_PACKAGE_DETAIL_KEY';
 export const MAVEN_PACKAGE_VERSIONS_LIST_KEY = 'MAVEN_PACKAGE_VERSIONS_LIST_KEY';
 export const PYTHON_PACKAGE_DETAIL_KEY = 'PYTHON_PACKAGE_DETAIL_KEY';
@@ -696,22 +696,22 @@ export const useGetPackagesQuery = (
     },
   });
 
-export const useLightwellRepositoryPackagesQuery = (
-  uuid: string,
+export const useLightwellPackagesQuery = (
+  repository: string,
   page: number,
   limit: number,
   search = '',
   enabled = true,
 ) =>
   useQuery({
-    queryKey: [LIGHTWELL_REPOSITORY_PACKAGES_KEY, uuid, page, limit, search],
-    queryFn: () => getLightwellRepositoryPackages(uuid, page, limit, search),
+    queryKey: [LIGHTWELL_PACKAGES_KEY, repository, page, limit, search],
+    queryFn: () => getLightwellPackages(repository, page, limit, search),
     placeholderData: keepPreviousData,
     staleTime: 60000,
-    enabled: enabled && !!uuid,
+    enabled: enabled && !!repository,
     meta: {
       title: 'Unable to find packages for the repository.',
-      id: 'lightwell-repository-packages-list-error',
+      id: 'lightwell-packages-list-error',
     },
   });
 

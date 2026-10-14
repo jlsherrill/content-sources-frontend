@@ -411,7 +411,9 @@ it('renders sidebar metadata', async () => {
 
   expect(await screen.findByText('Last updated')).toBeInTheDocument();
   expect(await screen.findByText('Group ID')).toBeInTheDocument();
-  expect(await screen.findByText(defaultLightwellRepositoryPackageItem.group)).toBeInTheDocument();
+  expect(
+    await screen.findByText(defaultLightwellRepositoryPackageItem.group ?? ''),
+  ).toBeInTheDocument();
   expect(await screen.findByText('Rebuilt by')).toBeInTheDocument();
   expect(await screen.findByText('Red Hat')).toBeInTheDocument();
   expect(await screen.findByText('JSON library for Java')).toBeInTheDocument();
@@ -995,8 +997,8 @@ it('registers breadcrumbs with Chrome via useRemoteHook', async () => {
         { pathname: '/lightwell', title: 'Lightwell Repositories' },
         { pathname: `/lightwell/${defaultRepoSlug}`, title: 'Java Validated' },
         {
-          pathname: `/lightwell/${defaultRepoSlug}/${encodeURIComponent(defaultLightwellRepositoryPackageItem.group)}/${encodeURIComponent(packageName)}`,
-          title: `${defaultLightwellRepositoryPackageItem.group}:${packageName}`,
+          pathname: `/lightwell/${defaultRepoSlug}/${encodeURIComponent(defaultLightwellRepositoryPackageItem.group ?? '')}/${encodeURIComponent(packageName)}`,
+          title: `${defaultLightwellRepositoryPackageItem.group ?? ''}:${packageName}`,
         },
       ],
       { dropLastChromeSegment: true },

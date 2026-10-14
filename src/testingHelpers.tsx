@@ -12,7 +12,7 @@ import {
   type ErrataItem,
   type Package,
   type RepositoryPackageItem,
-  type RepositoryPackagesResponse,
+  type LightwellPackagesResponse,
   ContentOrigin,
   PythonPackageDetailResponse,
   PythonPackageVersionsResponse,
@@ -486,12 +486,17 @@ export const defaultPythonValidatedPackageItem: RepositoryPackageItem = {
   ],
 };
 
-export const defaultLightwellRepositoryPackageResponse: RepositoryPackagesResponse = {
-  results: [defaultLightwellRepositoryPackageItem],
-  total: 1,
-  limit: 20,
-  offset: 0,
-};
+export const lightwellPackagesResponse = (
+  data: RepositoryPackageItem[],
+  count: number = data.length,
+): LightwellPackagesResponse => ({
+  data,
+  meta: { count, limit: 20, offset: 0 },
+  links: { first: '', last: '' },
+});
+
+export const defaultLightwellRepositoryPackageResponse: LightwellPackagesResponse =
+  lightwellPackagesResponse([defaultLightwellRepositoryPackageItem], 1);
 
 export const defaultPythonPackageDetail: PythonPackageDetailResponse = {
   name: 'requests',

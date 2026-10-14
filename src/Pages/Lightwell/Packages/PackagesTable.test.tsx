@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import PackagesTable from './PackagesTable';
-import { useLightwellRepositoryPackagesQuery } from 'services/Content/ContentQueries';
+import { useLightwellPackagesQuery } from 'services/Content/ContentQueries';
 import {
   defaultLightwellContentItem,
   defaultLightwellRepositoryPackageItem,
@@ -21,7 +21,7 @@ import useLightwellRepository from '../../../Hooks/Lightwell/useLightwellReposit
 import { useLightwellNavigateTo } from '../../../Hooks/Lightwell/navigation/useLightwellNavigateTo';
 
 jest.mock('services/Content/ContentQueries', () => ({
-  useLightwellRepositoryPackagesQuery: jest.fn(),
+  useLightwellPackagesQuery: jest.fn(),
 }));
 
 jest.mock('Hooks/Lightwell/useLightwellRepository');
@@ -94,7 +94,7 @@ const predisclosurePackageItem: RepositoryPackageItem = {
 };
 
 const mockPackagesQuery = (
-  overrides: Partial<ReturnType<typeof useLightwellRepositoryPackagesQuery>> = {},
+  overrides: Partial<ReturnType<typeof useLightwellPackagesQuery>> = {},
 ) => ({
   isLoading: false,
   isFetching: false,
@@ -146,13 +146,17 @@ beforeEach(() => {
     ),
   });
   mockRepository();
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() => mockPackagesQuery());
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() => mockPackagesQuery());
 });
 
 it('shows empty state when there are no packages', async () => {
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
-      data: { ...defaultLightwellRepositoryPackageResponse, results: [], total: 0 },
+      data: {
+        ...defaultLightwellRepositoryPackageResponse,
+        data: [],
+        meta: { count: 0, limit: 20, offset: 0 },
+      },
     }),
   );
 
@@ -164,12 +168,12 @@ it('shows empty state when there are no packages', async () => {
 });
 
 it('renders with a single package', async () => {
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
       data: {
         ...defaultLightwellRepositoryPackageResponse,
-        results: [defaultLightwellRepositoryPackageItem],
-        total: 1,
+        data: [defaultLightwellRepositoryPackageItem],
+        meta: { count: 1, limit: 20, offset: 0 },
       },
     }),
   );
@@ -190,7 +194,7 @@ it('renders with a single package', async () => {
 });
 
 it('shows a loading skeleton while packages are fetching', () => {
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({ isFetching: true }),
   );
 
@@ -215,9 +219,13 @@ it('shows loader while the repository is resolving', () => {
 });
 
 it('shows filtered empty state when search returns no packages', async () => {
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
-      data: { ...defaultLightwellRepositoryPackageResponse, results: [], total: 0 },
+      data: {
+        ...defaultLightwellRepositoryPackageResponse,
+        data: [],
+        meta: { count: 0, limit: 20, offset: 0 },
+      },
     }),
   );
 
@@ -280,12 +288,12 @@ it('expands additional versions when "N more" is clicked', async () => {
     repoName: getRepositoryPathSlug('python', 'validated'),
   });
   mockRepository(defaultPythonValidatedContentItem);
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
       data: {
         ...defaultLightwellRepositoryPackageResponse,
-        results: [defaultPythonValidatedPackageItem],
-        total: 1,
+        data: [defaultPythonValidatedPackageItem],
+        meta: { count: 1, limit: 20, offset: 0 },
       },
     }),
   );
@@ -331,12 +339,12 @@ it('shows one version row per upstream version with its latest release only', as
     repoName: getRepositoryPathSlug('maven', 'remediated'),
   });
   mockRepository(javaRemediatedContentItem);
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
       data: {
         ...defaultLightwellRepositoryPackageResponse,
-        results: [multiReleasePackage],
-        total: 1,
+        data: [multiReleasePackage],
+        meta: { count: 1, limit: 20, offset: 0 },
       },
     }),
   );
@@ -364,12 +372,12 @@ it('renders python validated packages with pip copy labels and no group ID colum
     repoName: getRepositoryPathSlug('python', 'validated'),
   });
   mockRepository(defaultPythonValidatedContentItem);
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
       data: {
         ...defaultLightwellRepositoryPackageResponse,
-        results: [defaultPythonValidatedPackageItem],
-        total: 1,
+        data: [defaultPythonValidatedPackageItem],
+        meta: { count: 1, limit: 20, offset: 0 },
       },
     }),
   );
@@ -390,12 +398,12 @@ it('renders python remediated packages with a Latest release column', async () =
     repoName: getRepositoryPathSlug('python', 'remediated'),
   });
   mockRepository(defaultPythonRemediatedContentItem);
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
       data: {
         ...defaultLightwellRepositoryPackageResponse,
-        results: [defaultPythonRemediatedRepositoryPackageItem],
-        total: 1,
+        data: [defaultPythonRemediatedRepositoryPackageItem],
+        meta: { count: 1, limit: 20, offset: 0 },
       },
     }),
   );
@@ -412,12 +420,12 @@ it('renders python predisclosure packages with a Latest release column', async (
     repoName: getRepositoryPathSlug('python', 'predisclosure'),
   });
   mockRepository(defaultPythonPredisclosureContentItem);
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
       data: {
         ...defaultLightwellRepositoryPackageResponse,
-        results: [defaultPythonRemediatedRepositoryPackageItem],
-        total: 1,
+        data: [defaultPythonRemediatedRepositoryPackageItem],
+        meta: { count: 1, limit: 20, offset: 0 },
       },
     }),
   );
@@ -433,11 +441,11 @@ it('groups published Python releases and copies the latest version', async () =>
   const writeText = mockClipboard();
   mockUseParams.mockReturnValue({ repoName: getRepositoryPathSlug('python', 'remediated') });
   mockRepository(defaultPythonRemediatedContentItem);
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
       data: {
         ...defaultLightwellRepositoryPackageResponse,
-        results: [
+        data: [
           {
             group: '',
             name: 'lightwell-fixture',
@@ -448,7 +456,7 @@ it('groups published Python releases and copies the latest version', async () =>
             ],
           },
         ],
-        total: 1,
+        meta: { count: 1, limit: 20, offset: 0 },
       },
     }),
   );
@@ -462,9 +470,13 @@ it('groups published Python releases and copies the latest version', async () =>
 });
 
 it('clears the search filter from the filtered empty state', async () => {
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
-      data: { ...defaultLightwellRepositoryPackageResponse, results: [], total: 0 },
+      data: {
+        ...defaultLightwellRepositoryPackageResponse,
+        data: [],
+        meta: { count: 0, limit: 20, offset: 0 },
+      },
     }),
   );
 
@@ -494,12 +506,12 @@ it('renders predisclosure packages with Latest release column', async () => {
     repoName: getRepositoryPathSlug('maven', 'predisclosure'),
   });
   mockRepository(javaPredisclosureContentItem);
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
       data: {
         ...defaultLightwellRepositoryPackageResponse,
-        results: [predisclosurePackageItem],
-        total: 1,
+        data: [predisclosurePackageItem],
+        meta: { count: 1, limit: 20, offset: 0 },
       },
     }),
   );
@@ -515,12 +527,12 @@ it('displays sensitive data warning for predisclosure repositories', async () =>
     repoName: getRepositoryPathSlug('maven', 'predisclosure'),
   });
   mockRepository(javaPredisclosureContentItem);
-  (useLightwellRepositoryPackagesQuery as jest.Mock).mockImplementation(() =>
+  (useLightwellPackagesQuery as jest.Mock).mockImplementation(() =>
     mockPackagesQuery({
       data: {
         ...defaultLightwellRepositoryPackageResponse,
-        results: [predisclosurePackageItem],
-        total: 1,
+        data: [predisclosurePackageItem],
+        meta: { count: 1, limit: 20, offset: 0 },
       },
     }),
   );

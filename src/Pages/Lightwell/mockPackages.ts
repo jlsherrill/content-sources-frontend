@@ -319,7 +319,7 @@ export const getMockLightwellPackages = (
   return packages.filter(
     (pkg) =>
       pkg.name.toLowerCase().includes(normalizedSearch) ||
-      pkg.group.toLowerCase().includes(normalizedSearch),
+      (pkg.group ?? '').toLowerCase().includes(normalizedSearch),
   );
 };
 
